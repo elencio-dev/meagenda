@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* --- Paleta Principal --- */
+  --coral: #E8503A;
+  --coral-light: #F28070;
+  --coral-pale: #FDF0EE;
+  --coral-dark: #C73D28;
+
+  /* --- Neutros --- */
+  --ink: #1A1A18;
+  --ink-60: #666660;
+  --ink-30: #B3B3AD;
+  --ink-10: #EBEBEA;
+  --paper: #FAFAF8;
+  --white: #FFFFFF;
+
+  /* --- Semânticas --- */
+  --success: #2E7D4F;
+  --success-bg: #EEF7F2;
+  --warning: #B45309;
+  --warning-bg: #FEF3C7;
+  --error: #C0392B;
+  --error-bg: #FDECEA;
+
+  /* --- shadcn tokens mapped to design system --- */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--white);
+  --card-foreground: var(--ink);
+  --popover: var(--white);
+  --popover-foreground: var(--ink);
+  --primary: var(--coral);
+  --primary-foreground: var(--white);
+  --secondary: var(--ink-10);
+  --secondary-foreground: var(--ink);
+  --muted: var(--ink-10);
+  --muted-foreground: var(--ink-60);
+  --accent: var(--coral-pale);
+  --accent-foreground: var(--coral-dark);
+  --destructive: var(--error);
+  --destructive-foreground: var(--white);
+  --border: var(--ink-10);
+  --input: var(--ink-10);
+  --ring: var(--coral);
+  --radius: 12px;
+}
+
+@theme inline {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-serif: var(--font-sans);
+  --font-mono: 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  
+  /* Custom colors for the design system */
+  --color-coral: var(--coral);
+  --color-coral-light: var(--coral-light);
+  --color-coral-pale: var(--coral-pale);
+  --color-coral-dark: var(--coral-dark);
+  --color-ink: var(--ink);
+  --color-ink-60: var(--ink-60);
+  --color-ink-30: var(--ink-30);
+  --color-ink-10: var(--ink-10);
+  --color-paper: var(--paper);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

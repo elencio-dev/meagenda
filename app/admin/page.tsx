@@ -1,0 +1,301 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { 
+  Calendar, 
+  Users, 
+  TrendingUp, 
+  Clock,
+  ChevronRight,
+  MoreHorizontal,
+  Check,
+  X as XIcon,
+  Phone,
+  Loader2
+} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
+
+type DashboardData = {
+  stats: {
+    todayCount: number
+    totalClients: number
+    newClientsThisMonth: number
+  }
+  todayAppointments: Array<{
+    id: number
+    client: string
+    service: string
+    time: string
+    duration: string
+    professional: string
+    status: string
+  }>
+  professionals: Array<{
+    id: number
+    name: string
+    role: string
+    available: boolean
+    appointments: number
+  }>
+}
+
+export default function AdminDashboard() {
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const fetchDashboard = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/dashboard")
+      const json = await res.json()
+      setData(json)
+    } catch {
+      setData(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchDashboard() }, [])
+
+  const updateStatus = async (id: number, status: string) => {
+    await fetch("/api/agendamentos", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    })
+    fetchDashboard()
+  }
+
+  const getStatusBadge = (status: string) => {
+    if (status === "confirmed") {
+      return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Confirmado</Badge>
+    }
+    return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">Pendente</Badge>
+  }
+
+  const stats = data ? [
+    {
+      title: "Agendamentos Hoje",
+      value: String(data.stats.todayCount),
+      change: `+${data.stats.todayCount}`,
+      changeLabel: "hoje",
+      icon: Calendar,
+      color: "coral"
+    },
+    {
+      title: "Clientes Ativos",
+      value: String(data.stats.totalClients),
+      change: `+${data.stats.newClientsThisMonth}`,
+      changeLabel: "este mês",
+      icon: Users,
+      color: "success"
+    },
+    {
+      title: "Taxa de Ocupação",
+      value: data.stats.todayCount > 0 ? `${Math.min(Math.round((data.stats.todayCount / 10) * 100), 100)}%` : "0%",
+      change: "—",
+      changeLabel: "capacidade",
+      icon: TrendingUp,
+      color: "warning"
+    },
+    {
+      title: "Profissionais",
+      value: String((data.professionals ?? []).filter(p => p.available).length),
+      change: "disponíveis",
+      changeLabel: "agora",
+      icon: Clock,
+      color: "ink"
+    }
+  ] : []
+
+  const getStatColor = (color: string) => {
+    switch (color) {
+      case "coral": return "bg-[var(--coral-pale)] text-[var(--coral)]"
+      case "success": return "bg-[var(--success-bg)] text-[var(--success)]"
+      case "warning": return "bg-[var(--warning-bg)] text-[var(--warning)]"
+      default: return "bg-[var(--ink-10)] text-[var(--ink)]"
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <Loader2 className="h-10 w-10 animate-spin text-[var(--coral)]" />
+        <p className="text-[var(--ink-60)]">Carregando dashboard...</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Page header */}
+      <div>
+        <h1 className="font-sans text-3xl text-[var(--ink)]">Dashboard</h1>
+        <p className="text-[var(--ink-60)] mt-1">Visão geral do seu negócio</p>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <Card key={stat.title} className="border-[var(--ink-10)] shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-[var(--ink-60)]">{stat.title}</p>
+                  <p className="text-3xl font-semibold text-[var(--ink)] mt-2">{stat.value}</p>
+                  <p className="text-xs text-[var(--ink-60)] mt-1">
+                    <span className="text-[var(--success)] font-medium">{stat.change}</span> {stat.changeLabel}
+                  </p>
+                </div>
+                <div className={cn("p-3 rounded-xl", getStatColor(stat.color))}>
+                  <stat.icon className="h-5 w-5" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Today's appointments */}
+        <div className="lg:col-span-2">
+          <Card className="border-[var(--ink-10)] shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">Agendamentos de Hoje</CardTitle>
+              <Button variant="ghost" className="text-[var(--coral)] hover:text-[var(--coral-dark)] hover:bg-[var(--coral-pale)]">
+                Ver todos
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {(data?.todayAppointments ?? []).length === 0 ? (
+                <div className="p-12 text-center">
+                  <Calendar className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
+                  <p className="text-[var(--ink-60)]">Nenhum agendamento para hoje</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--ink-10)]">
+                  {(data?.todayAppointments ?? []).map((appointment) => (
+                    <div key={appointment.id} className="flex items-center gap-4 p-4 hover:bg-[var(--paper)] transition-colors">
+                      <div className="text-center min-w-[60px]">
+                        <p className="text-lg font-semibold text-[var(--ink)]">{appointment.time}</p>
+                        <p className="text-xs text-[var(--ink-60)]">{appointment.duration}</p>
+                      </div>
+                      
+                      <Avatar className="h-12 w-12 border-2 border-[var(--ink-10)]">
+                        <AvatarFallback className="bg-[var(--coral-pale)] text-[var(--coral-dark)]">
+                          {appointment.client.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-[var(--ink)] truncate">{appointment.client}</p>
+                        <p className="text-sm text-[var(--ink-60)]">{appointment.service} com {appointment.professional}</p>
+                      </div>
+
+                      <div className="hidden sm:block">
+                        {getStatusBadge(appointment.status)}
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4 text-[var(--ink-60)]" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => updateStatus(appointment.id, "confirmed")}>
+                            <Check className="mr-2 h-4 w-4" />
+                            Confirmar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Phone className="mr-2 h-4 w-4" />
+                            Ligar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-[var(--error)]" onClick={() => updateStatus(appointment.id, "cancelled")}>
+                            <XIcon className="mr-2 h-4 w-4" />
+                            Cancelar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Quick actions */}
+          <Card className="border-[var(--ink-10)] shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">Ações Rápidas</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button className="w-full justify-start bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
+                <Calendar className="mr-2 h-4 w-4" />
+                Novo Agendamento
+              </Button>
+              <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
+                <Users className="mr-2 h-4 w-4" />
+                Adicionar Cliente
+              </Button>
+              <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
+                <Clock className="mr-2 h-4 w-4" />
+                Bloquear Horário
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Professionals availability */}
+          <Card className="border-[var(--ink-10)] shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">Profissionais</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(data?.professionals ?? []).length === 0 ? (
+                <p className="text-sm text-[var(--ink-60)] text-center py-4">Nenhum profissional cadastrado</p>
+              ) : (
+                (data?.professionals ?? []).map((professional) => (
+                  <div key={professional.id} className="flex items-center gap-3">
+                    <div className="relative">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-[var(--coral-pale)] text-[var(--coral-dark)]">
+                          {professional.name.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className={cn(
+                        "absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white",
+                        professional.available ? "bg-[var(--success)]" : "bg-[var(--ink-30)]"
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[var(--ink)] truncate">{professional.name}</p>
+                      <p className="text-xs text-[var(--ink-60)]">{professional.role}</p>
+                    </div>
+                    <Badge variant="secondary" className="bg-[var(--ink-10)] text-[var(--ink-60)]">
+                      {professional.appointments} hoje
+                    </Badge>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}

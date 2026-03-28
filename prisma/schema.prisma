@@ -1,0 +1,171 @@
+// Meagenda - Prisma Schema (Multi-tenant with Better Auth)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Better Auth tables ─────────────────────────────────────────
+model user {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  // Empresa extra fields
+  slug          String    @unique @default("")
+  phone         String    @default("")
+  address       String    @default("")
+  description   String    @default("")
+
+  sessions      session[]
+  accounts      account[]
+
+  // Relations to business data
+  profissionais Profissional[]
+  servicos      Servico[]
+  agendamentos  Agendamento[]
+  clientes      Cliente[]
+  configuracoes Configuracao[]
+}
+
+model session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+}
+
+model verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}
+
+// ─── Cliente ────────────────────────────────────────────────────
+model Cliente {
+  id           Int           @id @default(autoincrement())
+  userId       String
+  name         String
+  email        String
+  phone        String
+  birthDate    DateTime?
+  status       ClienteStatus @default(active)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  empresa      user          @relation(fields: [userId], references: [id])
+  agendamentos Agendamento[]
+
+  @@unique([email, userId])
+}
+
+enum ClienteStatus {
+  active
+  inactive
+  vip
+}
+
+// ─── Profissional ───────────────────────────────────────────────
+model Profissional {
+  id           Int           @id @default(autoincrement())
+  userId       String
+  name         String
+  role         String
+  available    Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+
+  empresa      user          @relation(fields: [userId], references: [id])
+  agendamentos Agendamento[]
+}
+
+// ─── Servico ────────────────────────────────────────────────────
+model Servico {
+  id           Int           @id @default(autoincrement())
+  userId       String
+  name         String
+  description  String        @default("")
+  price        Float
+  duration     Int
+  category     String
+  active       Boolean       @default(true)
+  popular      Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  empresa      user          @relation(fields: [userId], references: [id])
+  agendamentos Agendamento[]
+}
+
+// ─── Agendamento ────────────────────────────────────────────────
+model Agendamento {
+  id             Int               @id @default(autoincrement())
+  userId         String
+  clienteId      Int
+  servicoId      Int
+  profissionalId Int?
+  date           DateTime          @db.Date
+  time           String
+  status         AgendamentoStatus @default(pending)
+  price          Float             @default(0)
+  notes          String            @default("")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  empresa      user         @relation(fields: [userId], references: [id])
+  cliente      Cliente      @relation(fields: [clienteId], references: [id])
+  servico      Servico      @relation(fields: [servicoId], references: [id])
+  profissional Profissional? @relation(fields: [profissionalId], references: [id])
+}
+
+enum AgendamentoStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+// ─── Configuracao ───────────────────────────────────────────────
+model Configuracao {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  empresa user @relation(fields: [userId], references: [id])
+
+  @@unique([key, userId])
+}

@@ -1,0 +1,278 @@
+import Link from "next/link"
+import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar } from "lucide-react"
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-sans selection:bg-[var(--coral-pale)] selection:text-[var(--coral-dark)]">
+      
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 border-b border-[var(--ink-10)] bg-[var(--paper)]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[var(--coral)] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg leading-none">M</span>
+            </div>
+            <span className="font-semibold text-lg tracking-tight text-[var(--ink)]">MeAgenda</span>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--ink-60)]">
+            <Link href="#features" className="hover:text-[var(--coral)] transition-colors">Como Funciona</Link>
+            <Link href="#testimonials" className="hover:text-[var(--coral)] transition-colors">Avaliações</Link>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-medium text-[var(--ink-60)] hover:text-[var(--coral)] transition-colors">
+              Entrar
+            </Link>
+            <Link href="/register" className="px-5 py-2.5 bg-[var(--coral)] text-white text-sm font-medium rounded-full hover:bg-[var(--coral-dark)] transition-colors shadow-sm">
+              Criar Conta
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="pt-40 pb-20 px-6 relative overflow-hidden">
+        {/* Glow effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[var(--coral-pale)] blur-[120px] rounded-full pointer-events-none" />
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--coral)]/20 bg-[var(--coral-pale)] text-xs font-semibold text-[var(--coral)] mb-8 backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-[var(--coral)] animate-pulse" />
+            Vagas Ilimitadas Liberadas
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 leading-tight">
+            <span className="text-[var(--ink)]">Agende mais.</span>
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--ink)] to-[var(--ink-60)]">Trabalhe menos.</span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-[var(--ink-60)] max-w-2xl mx-auto mb-12 leading-relaxed">
+            A plataforma moderna para profissionais de sucesso. Tudo o que você precisa para automatizar sua agenda, atrair clientes e expandir seu negócio de forma inteligente.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <Link href="/register" className="w-full sm:w-auto px-8 py-4 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all shadow-[0_8px_24px_rgba(232,80,58,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
+              Começar Agora <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-[var(--card)] border border-[var(--ink-10)] text-[var(--ink)] font-medium rounded-full hover:bg-[var(--coral-pale)] hover:border-[var(--coral)] hover:text-[var(--coral-dark)] transition-colors flex items-center justify-center">
+              Ver Demonstração
+            </Link>
+          </div>
+
+          {/* Social Proof */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex -space-x-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-[var(--paper)] bg-[var(--ink-10)] overflow-hidden">
+                  <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User Avatar" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-[var(--ink-60)]">
+              Confiado por <strong className="text-[var(--ink)] font-medium">2.000+</strong> negócios no Brasil
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Flow / Como Funciona */}
+      <section id="features" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">Como a plataforma funciona</h2>
+            <p className="text-[var(--ink-60)]">Um fluxo automático e inteligente que trabalha para você 24 horas por dia.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            
+            {/* Step 1: Link Próprio */}
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span className="text-8xl font-black italic">1</span>
+              </div>
+              <div className="flex bg-[var(--paper)] rounded-xl border border-[var(--ink-10)] p-3 items-center gap-3 mb-8 relative z-10">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                </div>
+                <div className="bg-white border border-[var(--ink-10)] rounded text-xs px-3 py-1.5 text-[var(--ink-60)] flex-grow font-mono flex items-center gap-2">
+                  <span className="text-[var(--ink-30)]">https://</span>
+                  <span className="text-[var(--ink)]">meagenda.com/</span>
+                  <span className="text-[var(--coral)] font-semibold">studio-vip</span>
+                </div>
+              </div>
+              <div className="mt-auto relative z-10">
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">Compartilhe seu link</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">Divulgue sua página exclusiva no Instagram, WhatsApp ou onde preferir. O link é só seu.</p>
+              </div>
+            </div>
+
+            {/* Step 2: Cliente Agenda */}
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span className="text-8xl font-black italic">2</span>
+              </div>
+              <div className="bg-[var(--paper)] rounded-2xl border border-[var(--ink-10)] p-5 mb-8 relative z-10 shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="text-sm font-bold text-[var(--ink)]">Corte de Cabelo</div>
+                  <div className="text-xs text-[var(--ink-60)]">30 min</div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="px-4 py-2 bg-[var(--coral)] text-white text-xs rounded-lg font-medium shadow-[0_2px_8px_rgba(232,80,58,0.25)] relative">
+                    14:00
+                    <div className="absolute -bottom-4 -right-2 bg-white rounded-full p-1 shadow-md border border-[var(--ink-10)]">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" />
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 bg-white border border-[var(--ink-10)] text-[var(--ink)] text-xs rounded-lg">14:30</div>
+                  <div className="px-4 py-2 bg-white border border-[var(--ink-10)] text-[var(--ink)] text-xs rounded-lg opacity-50">15:00</div>
+                </div>
+              </div>
+              <div className="mt-auto relative z-10">
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">O cliente escolhe sozinho</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">Sem trocas infinitas de mensagens. Seu cliente acessa, vê os horários livres e reserva na hora.</p>
+              </div>
+            </div>
+
+            {/* Step 3: Confirmação Automática */}
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span className="text-8xl font-black italic">3</span>
+              </div>
+              
+              <div className="relative h-[110px] mb-8 z-10">
+                {/* Secondary card behind */}
+                <div className="absolute top-4 left-4 right-4 bg-white border border-[var(--ink-10)] shadow-sm rounded-xl p-4 flex gap-3 items-center opacity-60 scale-95 translate-y-3 blur-[1px]">
+                  <div className="bg-[var(--coral-pale)] p-1.5 rounded-full"><Calendar className="w-4 h-4 text-[var(--coral)]" /></div>
+                  <div className="h-2 bg-[var(--ink-10)] rounded w-1/2" />
+                </div>
+                
+                {/* Main confirmation card */}
+                <div className="absolute top-0 left-0 right-0 bg-[var(--success-bg)] border border-[var(--success)]/20 shadow-md rounded-xl p-4 flex gap-3 items-start">
+                  <div className="mt-0.5 bg-[var(--success)] p-1 rounded-full shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-[var(--success)] mb-1">Agendamento Confirmado!</div>
+                    <div className="text-xs text-[var(--success)]/80 leading-tight">Você reservou <strong>Corte Premium</strong> para Sexta-feira às <strong>14:00h</strong>.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-auto relative z-10">
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">Confirmação Imediata</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">A vaga é bloqueada automaticamente. O agendamento entra direto para a sua agenda confirmando a reserva.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Step 4: Dashboard Integrado (Wide Bottom) */}
+          <div className="grid grid-cols-1 md:grid-cols-4 bg-[var(--coral)] rounded-3xl p-8 shadow-[0_8px_30px_rgba(232,80,58,0.15)] overflow-hidden relative">
+            <div className="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none">
+               <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-white">
+                  <path d="M0,100 C30,50 70,50 100,0 L100,100 Z" />
+               </svg>
+            </div>
+            
+            <div className="col-span-1 md:col-span-2 flex flex-col justify-center relative z-10 mb-8 md:mb-0">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold text-white mb-6 w-max border border-white/30 backdrop-blur-md">
+                <Activity className="w-3 h-3" /> Dashboard do Profissional
+              </div>
+              <h3 className="text-xl md:text-3xl font-bold mb-4 text-white">Tudo sincronizado no seu controle</h3>
+              <p className="text-white/80 text-sm leading-relaxed max-w-sm">Você acompanha toda a sua equipe, histórico de clientes e o dinheiro entrando na hora, com relatórios limpos no painel <strong>Admin</strong>.</p>
+            </div>
+
+            <div className="col-span-1 md:col-span-2 relative z-10">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-2 text-white/90">
+                    <Users className="w-4 h-4" /> <span className="text-xs font-medium">Equipe</span>
+                  </div>
+                  <div className="text-2xl font-bold text-white mb-1">05</div>
+                  <div className="text-[10px] text-white/70">Profissionais ativos</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-2 text-white/90">
+                    <Calendar className="w-4 h-4" /> <span className="text-xs font-medium">Hoje</span>
+                  </div>
+                  <div className="text-2xl font-bold text-white mb-1">24</div>
+                  <div className="text-[10px] text-white/70">Agendamentos no dia</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 col-span-2 flex justify-between items-center">
+                  <div>
+                    <div className="text-xs text-white/90 font-medium mb-1">Faturamento Estimado</div>
+                    <div className="text-2xl font-bold text-white">R$ 1.840,00</div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <ArrowRight className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section id="testimonials" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">Veja o que nossos clientes dizem.</h2>
+            <p className="text-[var(--ink-60)]">Profissionais que revolucionaram a forma de gerenciar seus negócios.</p>
+          </div>
+
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            {[
+              {
+                text: "A plataforma transformou completamente a forma como agendamos serviços. Lançamos a agenda nova em 5 minutos ao invés de meses configurando sistemas antigos.",
+                name: "Juliana Silva", role: "Dona de Clínica de Estética", avatar: "5"
+              },
+              {
+                text: "Integração perfeita que melhorou nossas operações de barbearia e a eficiência da equipe. Meu salão não vive sem.",
+                name: "Tiago Mendes", role: "Gestor na BarberShop XP", avatar: "11"
+              },
+              {
+                text: "Aumentamos nossa receita em 30% já no primeiro mês diminuindo as mensagens no WhatsApp e a facilidade do cliente marcar sozinho 24h por dia.",
+                name: "Raquel Kim", role: "Diretora de Salão", avatar: "9"
+              },
+              {
+                text: "Recursos incríveis. Tudo que gerencia as comissões dos meus 15 barbeiros em um só lugar de forma limpa.",
+                name: "Marcos Junior", role: "CEO do Studio Alpha", avatar: "68"
+              },
+              {
+                text: "A melhor decisão do ano foi migrar nossa agenda de papel para a plataforma. Acabou os furos de clientes e ter buracos na grade (no-shows).",
+                name: "Camila Torres", role: "Manicure Autônoma", avatar: "44"
+              },
+            ].map((t, idx) => (
+              <div key={idx} className="break-inside-avoid bg-[var(--card)] shadow-sm hover:shadow-md transition-shadow border border-[var(--ink-10)] p-8 rounded-3xl">
+                <div className="flex gap-1 mb-6">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-[var(--coral)] text-[var(--coral)]" />)}
+                </div>
+                <p className="text-[var(--ink-60)] mb-8 text-[15px] leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[var(--ink-10)] overflow-hidden flex-shrink-0">
+                    <img src={`https://i.pravatar.cc/100?img=${t.avatar}`} alt={t.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-bold text-[var(--ink)]">{t.name}</h4>
+                    <p className="text-sm text-[var(--ink-60)] font-medium">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)] text-center text-sm font-medium text-[var(--ink-30)]">
+        <p>© 2026 MeAgenda Inc. Todos os direitos reservados.</p>
+      </footer>
+
+    </div>
+  )
+}
