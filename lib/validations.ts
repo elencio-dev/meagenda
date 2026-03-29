@@ -33,4 +33,5 @@ export const serviceSchema = z.object({
   price: z.number().nonnegative("O preço não pode ser negativo").optional().default(0),
   category: z.string().optional().nullable(),
   popular: z.boolean().optional(),
+  imageUrl: z.string().url("A URL da imagem é inválida").optional().nullable().or(z.literal("")),
 });

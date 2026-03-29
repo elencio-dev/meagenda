@@ -313,6 +313,10 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-60)]">
                   <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
+                  Catálogo visual (Com fotos)
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-60)]">
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
                   Lembretes automáticos
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
@@ -364,6 +368,10 @@ export default function LandingPage() {
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
                   Dashboard de resultados
+                </li>
+                <li className="flex gap-3 items-start text-[var(--ink)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div><p className="font-semibold text-sm">Catálogo com Fotos em HD</p><p className="text-xs text-[var(--ink-60)] leading-tight">Agregue valor mostrando seus serviços</p></div>
                 </li>
               </ul>
               
