@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e6]: S
+        - generic [ref=e7]: Salão Teste E2E· powered by MeAgenda
+    - main [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e11]:
+          - generic [ref=e12]:
+            - generic [ref=e14]: ST
+            - heading "Salão Teste E2E" [level=1] [ref=e16]
+          - generic [ref=e18]:
+            - img [ref=e19]
+            - generic [ref=e22]:
+              - paragraph [ref=e23]: Contato
+              - paragraph [ref=e24]: (11) 99900-0000
+          - generic [ref=e25]:
+            - heading "Agendamento online" [level=3] [ref=e26]:
+              - img [ref=e27]
+              - text: Agendamento online
+            - paragraph [ref=e33]: Escolha o serviço, profissional, data e horário. Rápido e fácil.
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e37]:
+              - img [ref=e39]
+              - generic [ref=e41]: Serviço
+            - generic [ref=e44]:
+              - img [ref=e46]
+              - generic [ref=e48]: Profissional
+            - generic [ref=e51]:
+              - img [ref=e53]
+              - generic [ref=e55]: Data
+            - generic [ref=e58]:
+              - img [ref=e60]
+              - generic [ref=e62]: Horário
+            - generic [ref=e65]:
+              - generic [ref=e66]: "5"
+              - generic [ref=e67]: Dados
+          - generic [ref=e69]:
+            - heading "Seus dados" [level=2] [ref=e71]
+            - generic [ref=e72]:
+              - generic [ref=e73]:
+                - text: Nome completo
+                - textbox "Nome completo" [ref=e74]:
+                  - /placeholder: Maria da Silva
+                  - text: João Playwright
+                - paragraph [ref=e75]: Como você prefere ser chamado(a)
+              - generic [ref=e76]:
+                - text: E-mail
+                - textbox "E-mail" [ref=e77]:
+                  - /placeholder: maria@email.com
+                  - text: joao.playwright@email.com
+                - paragraph [ref=e78]: Para receber o comprovante em PDF
+              - generic [ref=e79]:
+                - text: Contato / WhatsApp
+                - textbox "Contato / WhatsApp" [ref=e80]:
+                  - /placeholder: (11) 91234-5678
+                  - text: (11) 99999-0000
+              - generic [ref=e81]:
+                - generic [ref=e82]: Observação (opcional)
+                - textbox "Observação (opcional)" [ref=e83]:
+                  - /placeholder: Alguma preferência ou informação adicional...
+              - button "Confirmar agendamento" [active] [ref=e84]
+          - button "Passo anterior" [ref=e86]:
+            - img [ref=e87]
+            - text: Passo anterior
+  - button "Open Next.js Dev Tools" [ref=e94] [cursor=pointer]:
+    - img [ref=e95]
+  - alert [ref=e98]
+```

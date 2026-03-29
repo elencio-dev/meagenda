@@ -56,6 +56,7 @@ export function TimeSlots({ selectedDate, profissionalId, selectedTime, onSelect
         {slots.map(({ time, available }) => (
           <button
             key={time}
+            data-testid="time-slot"
             onClick={() => available && onSelectTime(time)}
             disabled={!available}
             className={cn(

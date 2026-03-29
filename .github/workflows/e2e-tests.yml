@@ -1,0 +1,85 @@
+name: Testes E2E (Playwright)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: E2E Playwright
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    # Criação do banco de dados descartável (limpo) exclusivo para os testes desta rodada
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: rootpassword
+          POSTGRES_DB: meagenda_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Variáveis essenciais para a build e para o banco temporário
+      DATABASE_URL: postgresql://root:rootpassword@localhost:5432/meagenda_test
+      BETTER_AUTH_SECRET: um_segredo_qualquer_apenas_para_o_ci_nao_quebrar
+      BETTER_AUTH_URL: http://localhost:3000
+
+      # Variáveis usadas no código de teste (fixtures/test-data.ts)
+      E2E_BASE_URL: http://localhost:3000
+      E2E_TEST_SLUG: salao-teste-e2e
+      E2E_ADMIN_EMAIL: teste@meagenda.com.br
+      E2E_ADMIN_PASSWORD: Teste@1234
+
+    steps:
+      - name: 📥 Baixar código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🗄️ Prisma - Gerar Client
+        run: npx prisma generate
+
+      - name: 🗄️ Prisma - Enviar estrutura do banco
+        # Usamos push no invés de migrate deploy apenas neste teste 
+        # para garantir que as tabelas sejam injetadas no banco de testes zerado
+        run: npx prisma db push --skip-generate
+
+      - name: 🏗️ Fazer a Build (Produção)
+        # Como mudamos nosso "playwright.config.ts" para usar "npm run start" via "CI=true",
+        # nós precisamos "compilar" a aplicação assim como a Vercel faz.
+        run: npm run build
+        env:
+          CI: true
+
+      - name: 🌐 Playwright - Baixar Navegadores
+        run: npx playwright install --with-deps chromium
+
+      - name: 🧪 Playwright - Rodar Testes E2E
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: 📊 Upload Relatório de Testes (Se falhar)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

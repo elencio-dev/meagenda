@@ -96,14 +96,14 @@ export async function POST(request: NextRequest) {
     if (!servico) return NextResponse.json({ error: "Serviço não encontrado" }, { status: 404 })
 
     const dataPayload: any = {
-      userId,
-      clienteId,
-      servicoId,
       date: bookingDate,
       time,
       status: "confirmed",
       price: servico.price,
       notes: notes ?? "",
+      empresa: { connect: { id: userId } },
+      cliente: { connect: { id: clienteId } },
+      servico: { connect: { id: servicoId } }
     }
     if (profissionalId) dataPayload.profissionalId = profissionalId
 

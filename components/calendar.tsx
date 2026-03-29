@@ -91,6 +91,8 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
     days.push(
       <button
         key={day}
+        data-testid="calendar-day"
+        data-day={day}
         onClick={() => handleDateClick(day)}
         disabled={disabled}
         className={cn(
