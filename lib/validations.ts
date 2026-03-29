@@ -23,6 +23,7 @@ export const configSchema = z.object({
   description: z.string().optional().nullable().or(z.literal("")),
   phone: z.string().optional().nullable().or(z.literal("")),
   address: z.string().optional().nullable().or(z.literal("")),
+  remindersEnabled: z.boolean().optional(),
   operatingHours: z.any().optional(), // Can refine later if needed
 });
 

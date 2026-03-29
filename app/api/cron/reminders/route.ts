@@ -34,7 +34,8 @@ export async function GET(request: Request) {
           in: ["pending", "confirmed"]
         },
         empresa: {
-          planId: "PRO"
+          planId: "PRO",
+          remindersEnabled: true
         }
       },
       include: {

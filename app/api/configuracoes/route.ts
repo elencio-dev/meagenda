@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         address: true,
         description: true,
         image: true,
+        remindersEnabled: true,
       },
     })
     
@@ -67,6 +68,7 @@ export async function PATCH(request: NextRequest) {
           ...(profile.address !== undefined && { address: profile.address || "" }),
           ...(profile.description !== undefined && { description: profile.description || "" }),
           ...(profile.image !== undefined && { image: profile.image }),
+          ...(profile.remindersEnabled !== undefined && { remindersEnabled: profile.remindersEnabled }),
         },
       })
     }

@@ -14,7 +14,7 @@ export default function ConfiguracoesPage() {
   const [success, setSuccess] = useState("")
 
   const [profile, setProfile] = useState({
-    name: "", slug: "", phone: "", address: "", description: "", image: ""
+    name: "", slug: "", phone: "", address: "", description: "", image: "", remindersEnabled: true
   })
   
   // Default working hours
@@ -184,6 +184,25 @@ export default function ConfiguracoesPage() {
               placeholder="https://sua-imagem.com/logo.png"
               className="w-full px-4 py-2 rounded-xl border border-[var(--ink-10)] outline-none focus:border-[var(--coral)]"
             />
+          </div>
+
+          <div className="space-y-2 pb-2">
+            <label className="text-sm font-medium text-[var(--ink)] flex items-center gap-2">
+              Automações
+            </label>
+            <div className="flex items-center gap-3 p-4 bg-[var(--ink-5)] rounded-xl border border-[var(--ink-10)]">
+              <input
+                type="checkbox"
+                id="remindersEnabled"
+                checked={profile.remindersEnabled}
+                onChange={e => setProfile({...profile, remindersEnabled: e.target.checked})}
+                className="w-5 h-5 accent-[var(--coral)] cursor-pointer"
+              />
+              <label htmlFor="remindersEnabled" className="text-sm text-[var(--ink-80)] cursor-pointer select-none">
+                Enviar lembretes automáticos para clientes
+                <span className="block text-xs text-[var(--ink-60)] mt-0.5">Dispara um aviso próximo ao horário da sessão. (Apenas Plano PRO)</span>
+              </label>
+            </div>
           </div>
 
           <div className="flex justify-end pt-2">
