@@ -13,7 +13,7 @@ import type { BookingData, BookingResult } from "@/lib/types"
 
 export function BookingClientFlow({ slug, initialData }: { slug: string; initialData: BookingData }) {
   const [bookingData] = useState<BookingData>(initialData)
-  
+
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
@@ -21,7 +21,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null)
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", notes: "" })
   const [bookingResult, setBookingResult] = useState<BookingResult | null>(null)
-  
+
   // Optimistic UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -150,8 +150,8 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
             {isSubmitting && (
               <div className="absolute inset-0 z-10 bg-[var(--paper)]/60 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
-                   <div className="w-8 h-8 border-4 border-[var(--coral)] border-t-transparent rounded-full animate-spin" />
-                   <span className="text-sm text-[var(--ink)] font-semibold">Confirmando...</span>
+                  <div className="w-8 h-8 border-4 border-[var(--coral)] border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm text-[var(--ink)] font-semibold">Confirmando...</span>
                 </div>
               </div>
             )}
@@ -194,7 +194,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
             {currentStep > 1 && currentStep < 6 && (
               <div className="mt-8">
                 <button disabled={isSubmitting} onClick={handlePrevStep} className="inline-flex items-center gap-2 text-[var(--coral)] hover:bg-[var(--coral-pale)] disabled:opacity-50 px-4 py-2 rounded-lg transition-colors">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   Passo anterior
                 </button>
               </div>

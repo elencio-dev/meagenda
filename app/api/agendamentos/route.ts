@@ -72,9 +72,9 @@ export async function POST(request: NextRequest) {
     const bookingDate = new Date(date)
     const nextDay = new Date(bookingDate); nextDay.setDate(nextDay.getDate() + 1)
 
-    // ─── Verificação de conflito de vaga ────────────────────────────
-    // Se tem profissional: bloqueia esse profissional nessa hora
-    // Se não tem profissional: bloqueia qualquer agendamento nessa hora para a empresa
+    // ─── Verificação de conflito de vaga (Agendamentos) ─────────────
+    // Se tem profissional: verifica se o profissional está ocupado
+    // Se não tem profissional: verifica se a empresa já está com horário ocupado
     const conflictWhere = profissionalId
       ? { userId, profissionalId: Number(profissionalId), date: { gte: bookingDate, lt: nextDay }, time, NOT: { status: "cancelled" } }
       : { userId, date: { gte: bookingDate, lt: nextDay }, time, NOT: { status: "cancelled" } }
@@ -91,6 +91,30 @@ export async function POST(request: NextRequest) {
       )
     }
     // ────────────────────────────────────────────────────────────────
+
+    // ─── Verificação de Bloqueio Manual ─────────────────────────────
+    const blockWhere: any = {
+      userId,
+      date: { gte: bookingDate, lt: nextDay },
+      time,
+      OR: [{ profissionalId: null }]
+    }
+    if (profissionalId) {
+      blockWhere.OR.push({ profissionalId: Number(profissionalId) })
+    }
+
+    const blockConflict = await prisma.bloqueio.findFirst({
+      where: blockWhere
+    })
+
+    if (blockConflict) {
+      return NextResponse.json(
+        { error: "Este horário está bloqueado e indisponível para agendamento." },
+        { status: 409 }
+      )
+    }
+    // ────────────────────────────────────────────────────────────────
+
 
     const servico = await prisma.servico.findUnique({ where: { id: servicoId } })
     if (!servico) return NextResponse.json({ error: "Serviço não encontrado" }, { status: 404 })

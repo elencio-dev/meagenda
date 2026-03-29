@@ -12,7 +12,9 @@ import {
   X as XIcon,
   Phone,
   Calendar as CalendarIcon,
-  Loader2
+  Loader2,
+  Lock,
+  Trash2
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -43,7 +45,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 type Appointment = {
-  id: number
+  id: string | number
   client: string
   email: string
   phone: string
@@ -54,6 +56,8 @@ type Appointment = {
   duration: string
   professional: string
   status: string
+  isBlock?: boolean
+  dbId?: number
 }
 
 type Servico = { id: number; name: string; price: number }
@@ -72,12 +76,19 @@ export default function AgendamentosPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Form state
+  // Form state agendamento
   const [formClienteId, setFormClienteId] = useState("")
   const [formServicoId, setFormServicoId] = useState("")
   const [formProfissionalId, setFormProfissionalId] = useState("")
   const [formDate, setFormDate] = useState("")
   const [formTime, setFormTime] = useState("")
+
+  // Form state bloqueio
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false)
+  const [blockProfId, setBlockProfId] = useState("all")
+  const [blockDate, setBlockDate] = useState("")
+  const [blockTime, setBlockTime] = useState("")
+  const [blockReason, setBlockReason] = useState("")
 
   const dateStr = currentDate.toISOString().split("T")[0]
 
@@ -85,10 +96,43 @@ export default function AgendamentosPage() {
     setLoading(true)
     try {
       const params = new URLSearchParams({ date: dateStr })
-      if (statusFilter !== "all") params.set("status", statusFilter)
-      const res = await fetch(`/api/agendamentos?${params}`)
-      const data = await res.json()
-      setAppointments(Array.isArray(data) ? data : [])
+      if (statusFilter !== "all" && statusFilter !== "blocked") params.set("status", statusFilter)
+      
+      const [resAg, resBl] = await Promise.all([
+        fetch(`/api/agendamentos?${params}`),
+        fetch(`/api/bloqueios?${params}`)
+      ])
+      
+      const dataAg = await resAg.json()
+      const dataBl = await resBl.json()
+      
+      let combined: Appointment[] = Array.isArray(dataAg) ? dataAg.map((a: any) => ({ ...a, dbId: a.id })) : []
+      if (Array.isArray(dataBl)) {
+        const blocks: Appointment[] = dataBl.map(b => ({
+          id: `block-${b.id}`,
+          dbId: b.id,
+          client: "Horário Bloqueado",
+          email: "",
+          phone: "",
+          service: b.reason || "Indisponível",
+          price: 0,
+          date: b.date,
+          time: b.time,
+          duration: "—",
+          professional: b.profissional?.name || "Todos os Profissionais",
+          status: "blocked",
+          isBlock: true
+        }))
+        combined = [...combined, ...blocks]
+      }
+      
+      if (statusFilter === "blocked") {
+        combined = combined.filter(a => a.isBlock)
+      }
+      
+      // Sort by time
+      combined.sort((a, b) => a.time.localeCompare(b.time))
+      setAppointments(combined)
     } catch {
       setAppointments([])
     } finally {
@@ -144,6 +188,38 @@ export default function AgendamentosPage() {
     }
   }
 
+  const handleCreateBlock = async () => {
+    if (!blockDate || !blockTime) return
+    setSubmitting(true)
+    try {
+      await fetch("/api/bloqueios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: blockDate,
+          time: blockTime,
+          profissionalId: blockProfId === "all" ? null : Number(blockProfId),
+          reason: blockReason
+        }),
+      })
+      setBlockDialogOpen(false)
+      setBlockDate(""); setBlockTime(""); setBlockReason(""); setBlockProfId("all")
+      fetchAppointments()
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleDeleteBlock = async (id: number) => {
+    if (!confirm("Remover este bloqueio de horário?")) return
+    await fetch("/api/bloqueios", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    })
+    fetchAppointments()
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -154,6 +230,8 @@ export default function AgendamentosPage() {
         return <Badge className="bg-[var(--error-bg)] text-[var(--error)] hover:bg-[var(--error-bg)] border-0">Cancelado</Badge>
       case "completed":
         return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Concluído</Badge>
+      case "blocked":
+        return <Badge variant="secondary" className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0"><Lock className="w-3 h-3 mr-1" /> Bloqueio</Badge>
       default:
         return null
     }
@@ -186,14 +264,82 @@ export default function AgendamentosPage() {
           <p className="text-[var(--ink-60)] mt-1">Gerencie todos os agendamentos</p>
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Agendamento
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+        <div className="flex items-center gap-3">
+          <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--ink-10)]">
+                <Lock className="h-4 w-4 mr-2" />
+                Bloquear
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-sans text-xl">Bloquear Horário</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Profissional</Label>
+                  <Select value={blockProfId} onValueChange={setBlockProfId}>
+                    <SelectTrigger className="border-[var(--ink-10)]">
+                      <SelectValue placeholder="Aplicar bloqueio para quem?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Geral (Todos os Profissionais)</SelectItem>
+                      {profissionais.map(p => (
+                        <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Data</Label>
+                    <Input 
+                      type="date" 
+                      value={blockDate}
+                      onChange={e => setBlockDate(e.target.value)}
+                      className="border-[var(--ink-10)]" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Horário</Label>
+                    <Input 
+                      type="time" 
+                      value={blockTime}
+                      onChange={e => setBlockTime(e.target.value)}
+                      className="border-[var(--ink-10)]" 
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Motivo ou Observação (Opcional)</Label>
+                  <Input 
+                    value={blockReason}
+                    onChange={e => setBlockReason(e.target.value)}
+                    placeholder="Ex: Almoço, Folga, Evento" 
+                    className="border-[var(--ink-10)]"
+                  />
+                </div>
+                <Button 
+                  className="w-full bg-[var(--ink)] hover:bg-black text-white mt-2"
+                  onClick={handleCreateBlock}
+                  disabled={submitting}
+                >
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Confirmar Bloqueio
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Agendamento
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="font-sans text-xl">Novo Agendamento</DialogTitle>
             </DialogHeader>
@@ -267,7 +413,8 @@ export default function AgendamentosPage() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {/* Date navigation */}
@@ -316,6 +463,8 @@ export default function AgendamentosPage() {
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="confirmed">Confirmados</SelectItem>
             <SelectItem value="pending">Pendentes</SelectItem>
+            <SelectItem value="completed">Concluídos</SelectItem>
+            <SelectItem value="blocked">Bloqueados</SelectItem>
             <SelectItem value="cancelled">Cancelados</SelectItem>
           </SelectContent>
         </Select>
@@ -367,34 +516,50 @@ export default function AgendamentosPage() {
 
                   <div className="flex items-center justify-between sm:justify-end gap-4">
                     <div className="text-right">
-                      <p className="font-semibold text-[var(--ink)]">R$ {appointment.price}</p>
+                      {appointment.isBlock ? (
+                        <p className="font-semibold text-[var(--ink-30)]">—</p>
+                      ) : (
+                        <p className="font-semibold text-[var(--ink)]">R$ {appointment.price}</p>
+                      )}
                       {getStatusBadge(appointment.status)}
                     </div>
 
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4 text-[var(--ink-60)]" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => updateStatus(appointment.id, "confirmed")}>
-                          <Check className="mr-2 h-4 w-4" />
-                          Confirmar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Phone className="mr-2 h-4 w-4" />
-                          Ligar para {appointment.phone}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="text-[var(--error)]"
-                          onClick={() => updateStatus(appointment.id, "cancelled")}
-                        >
-                          <XIcon className="mr-2 h-4 w-4" />
-                          Cancelar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {appointment.isBlock ? (
+                       <Button 
+                         variant="ghost" 
+                         size="icon" 
+                         className="text-[var(--error)] hover:bg-[var(--error-bg)]"
+                         onClick={() => appointment.dbId && handleDeleteBlock(appointment.dbId)}
+                         title="Remover Bloqueio"
+                       >
+                         <Trash2 className="h-4 w-4" />
+                       </Button>
+                    ) : (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4 text-[var(--ink-60)]" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => appointment.dbId && updateStatus(appointment.dbId, "confirmed")}>
+                            <Check className="mr-2 h-4 w-4" />
+                            Confirmar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Phone className="mr-2 h-4 w-4" />
+                            Ligar para {appointment.phone}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-[var(--error)]"
+                            onClick={() => appointment.dbId && updateStatus(appointment.dbId, "cancelled")}
+                          >
+                            <XIcon className="mr-2 h-4 w-4" />
+                            Cancelar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                 </div>
               ))}

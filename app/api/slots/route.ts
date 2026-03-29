@@ -52,25 +52,38 @@ export async function GET(request: NextRequest) {
     const nextDay = new Date(date); nextDay.setDate(nextDay.getDate() + 1)
 
     // Agendamentos bloqueando horário geral da empresa OU do profissional específico
-    // Agendamentos bloqueando horário geral da empresa OU do profissional específico
-    // Separado em duas queries para evitar erro de tipagem/runtime do Prisma com { profissionalId: null }
-    const [generalBookings, professionalBookings] = await Promise.all([
+    // Agendamentos bloqueando horário geral da empresa OU do profissional específico E Bloqueios manuais do Admin
+    const [generalBookings, professionalBookings, generalBlocks, professionalBlocks] = await Promise.all([
       // Vagas ocupadas no geral (clientes marcaram "sem profissional")
       prisma.agendamento.findMany({
         where: { userId, date: { gte: date, lt: nextDay }, status: { not: "cancelled" } },
         select: { time: true, profissionalId: true },
-      }).then(res => res.filter(a => a.profissionalId === null)),
+      }).then(res => res.filter((a: { time: string; profissionalId: number | null }) => a.profissionalId === null)),
       
       // Vagas ocupadas pelo profissional específico
       profissionalId ? prisma.agendamento.findMany({
         where: { userId, profissionalId: Number(profissionalId), date: { gte: date, lt: nextDay }, status: { not: "cancelled" } },
         select: { time: true },
+      }) : Promise.resolve([]),
+
+      // Bloqueios Manuais (Gerais - profissionalId nulo)
+      prisma.bloqueio.findMany({
+        where: { userId, date: { gte: date, lt: nextDay } },
+        select: { time: true, profissionalId: true },
+      }).then(res => res.filter((b: { time: string; profissionalId: number | null }) => b.profissionalId === null)),
+
+      // Bloqueios Manuais do Profissional
+      profissionalId ? prisma.bloqueio.findMany({
+        where: { userId, profissionalId: Number(profissionalId), date: { gte: date, lt: nextDay } },
+        select: { time: true },
       }) : Promise.resolve([])
     ])
 
     const bookedTimes = new Set([
-      ...generalBookings.map(a => a.time),
-      ...professionalBookings.map(a => a.time)
+      ...generalBookings.map((a: { time: string }) => a.time),
+      ...professionalBookings.map((a: { time: string }) => a.time),
+      ...generalBlocks.map((b: { time: string }) => b.time),
+      ...professionalBlocks.map((b: { time: string }) => b.time)
     ])
     return NextResponse.json({
       slots: allSlots.map(time => ({ time, available: !bookedTimes.has(time) })),

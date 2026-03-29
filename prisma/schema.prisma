@@ -34,6 +34,7 @@ model user {
   agendamentos  Agendamento[]
   clientes      Cliente[]
   configuracoes Configuracao[]
+  bloqueios     Bloqueio[]
 }
 
 model session {
@@ -109,6 +110,7 @@ model Profissional {
 
   empresa      user          @relation(fields: [userId], references: [id])
   agendamentos Agendamento[]
+  bloqueios    Bloqueio[]
 }
 
 // ─── Servico ────────────────────────────────────────────────────
@@ -155,6 +157,20 @@ enum AgendamentoStatus {
   confirmed
   cancelled
   completed
+}
+
+// ─── Bloqueio ───────────────────────────────────────────────────
+model Bloqueio {
+  id             Int           @id @default(autoincrement())
+  userId         String
+  profissionalId Int?
+  date           DateTime      @db.Date
+  time           String
+  reason         String        @default("")
+  createdAt      DateTime      @default(now())
+
+  empresa        user          @relation(fields: [userId], references: [id])
+  profissional   Profissional? @relation(fields: [profissionalId], references: [id])
 }
 
 // ─── Configuracao ───────────────────────────────────────────────
