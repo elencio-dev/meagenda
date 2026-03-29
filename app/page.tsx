@@ -361,15 +361,11 @@ export default function LandingPage() {
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
                   Dashboard de resultados
                 </li>
-                <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Suporte prioritário
-                </li>
               </ul>
               
               <div className="text-center mt-auto pt-4">
                 <Link href="/register?plan=pro" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[#2F9E73] hover:text-[#2F9E73] transition-all">
-                  Testar 14 dias grátis
+                  Assinar Plano Pro
                 </Link>
               </div>
             </div>
