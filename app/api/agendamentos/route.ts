@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getUserId, getSessionUser } from "@/lib/auth-helpers"
 import { publicBookingSchema, updateBookingSchema } from "@/lib/validations"
+import { canCreateAppointment } from "@/lib/billing"
 
 export async function GET(request: NextRequest) {
   const userId = await getUserId(request)
@@ -57,6 +58,14 @@ export async function POST(request: NextRequest) {
   if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
   try {
+    const canCreate = await canCreateAppointment(userId)
+    if (!canCreate) {
+      return NextResponse.json(
+        { error: "Este link não aceita mais agendamentos no momento." },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const parseRes = publicBookingSchema.safeParse(body)
     

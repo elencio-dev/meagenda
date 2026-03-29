@@ -24,6 +24,7 @@ model user {
   phone         String    @default("")
   address       String    @default("")
   description   String    @default("")
+  planId        String    @default("FREE") // "FREE" ou "PRO"
 
   sessions      session[]
   accounts      account[]
@@ -143,6 +144,7 @@ model Agendamento {
   status         AgendamentoStatus @default(pending)
   price          Float             @default(0)
   notes          String            @default("")
+  reminderSent   Boolean           @default(false)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
