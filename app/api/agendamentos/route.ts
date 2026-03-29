@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { getUserId, getSessionUser } from "@/lib/auth-helpers"
 import { publicBookingSchema, updateBookingSchema } from "@/lib/validations"
 import { canCreateAppointment } from "@/lib/billing"
+import * as nodemailer from "nodemailer"
+import { generateReceiptPDF } from "@/lib/pdf"
 
 export async function GET(request: NextRequest) {
   const userId = await getUserId(request)
@@ -142,7 +144,76 @@ export async function POST(request: NextRequest) {
 
     const agendamento = await prisma.agendamento.create({
       data: dataPayload,
+      include: {
+        cliente: true,
+        profissional: true,
+        servico: true,
+        empresa: true
+      }
     })
+
+    // ─── Disparo do Recibo em PDF (Nodemailer) ─────────────────────────
+    if (agendamento.cliente.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      try {
+        const pdfBuffer = await generateReceiptPDF({
+          id: agendamento.id,
+          clientName: agendamento.cliente.name,
+          clientEmail: agendamento.cliente.email,
+          clientPhone: agendamento.cliente.phone || "",
+          serviceName: agendamento.servico.name,
+          professionalName: agendamento.profissional?.name || "Sem profissional",
+          date: bookingDate,
+          time,
+          servicePrice: agendamento.servico.price,
+          notes: agendamento.notes || "",
+          businessName: agendamento.empresa.name || "Studio"
+        })
+
+        const transporter = nodemailer.createTransport({
+          host: "smtp.gmail.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          }
+        })
+
+        const dataLocal = bookingDate.toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit', year: 'numeric' })
+        
+        // Disparar em "background" anexando o Buffer
+        // Numa edge network às vezes pode dropar se não usar waitUntil, mas como usamos Node API, a gente aguarda para garantir a entrega
+        await transporter.sendMail({
+          from: `"MeAgenda" <${process.env.EMAIL_USER}>`,
+          to: agendamento.cliente.email,
+          subject: `Recebemos seu Agendamento: ${agendamento.empresa.name}`,
+          html: `
+            <div style="font-family: sans-serif; color: #333; padding: 20px;">
+              <h2>Olá, ${agendamento.cliente.name}!</h2>
+              <p>O seu agendamento na <b>${agendamento.empresa.name}</b> foi processado com sucesso.</p>
+              <p>Verifique o arquivo PDF em anexo contendo os detalhes do seu recibo.</p>
+              <br/>
+              <p>Data: <b>${dataLocal}</b> às <b>${agendamento.time}</b></p>
+              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #64748b;">Esse é um e-mail automático do sistema MeAgenda.</p>
+            </div>
+          `,
+          attachments: [
+            {
+              filename: 'comprovante-agendamento.pdf',
+              content: pdfBuffer,
+              contentType: 'application/pdf'
+            }
+          ]
+        })
+        console.log(`[BOOKING] Recibo PDF enviado para ${agendamento.cliente.email}`)
+      } catch (err) {
+        console.error(`[BOOKING] Falha ao gerar/enviar PDF para ${agendamento.cliente.email}`, err)
+      }
+    } else {
+      console.log(`[BOOKING] Pulando envio de email PDF. Falta credencial SMTP ou e-mail de cliente.`)
+    }
+    // ──────────────────────────────────────────────────────────────────
 
     return NextResponse.json(agendamento, { status: 201 })
   } catch (error) {
