@@ -47,7 +47,7 @@ test.describe("Fluxo do Admin - Login e Dashboard", () => {
 
     // Verificar que a seção "Próximos Agendamentos" existe
     await expect(
-      page.locator("text=/Próximos Agendamentos/i")
+      page.locator("text=/Próximos Agendamentos/i").first()
     ).toBeVisible({ timeout: 8_000 })
 
     // Verificar que o nome do cliente fictício aparece na lista
