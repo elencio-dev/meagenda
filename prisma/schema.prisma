@@ -25,6 +25,7 @@ model user {
   address       String    @default("")
   description   String    @default("")
   planId        String    @default("FREE") // "FREE" ou "PRO"
+  remindersEnabled Boolean @default(true) // Controle do dashboard para não enviar lembretes se o admin não quiser
 
   sessions      session[]
   accounts      account[]

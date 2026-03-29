@@ -28,6 +28,15 @@ import {
 import { cn } from "@/lib/utils"
 
 type DashboardData = {
+  billing?: {
+    plan: string
+    planName: string
+    maxAppointments: number | "Ilimitado"
+    currentAppointments: number | null
+    usagePercentage: number
+    hasReminders: boolean
+    remindersEnabled: boolean
+  }
   stats: {
     todayCount: number
     totalClients: number
@@ -71,6 +80,21 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => { fetchDashboard() }, [])
+
+  const handleUpgrade = async () => {
+    try {
+      if (!confirm("Simular contratação do Plano Pro por R$49,00?")) return
+      setLoading(true)
+      const res = await fetch("/api/billing/upgrade", { method: "POST" })
+      if (!res.ok) throw new Error("Falha no upgrade")
+      alert("Upgrade realizado com sucesso! Bem-vindo ao PRO.")
+      fetchDashboard()
+    } catch(err) {
+      console.error(err)
+      alert("Erro ao realizar upgrade.")
+      setLoading(false)
+    }
+  }
 
   const updateStatus = async (id: number, status: string) => {
     await fetch("/api/agendamentos", {
@@ -151,6 +175,32 @@ export default function AdminDashboard() {
         <h1 className="font-sans text-3xl text-[var(--ink)]">Dashboard</h1>
         <p className="text-[var(--ink-60)] mt-1">Visão geral do seu negócio</p>
       </div>
+
+      {/* Banner de Plano */}
+      {data?.billing && (
+        <Card className={cn("border-2 shadow-sm", data.billing.plan === "PRO" ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50")}>
+          <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-semibold text-[var(--ink)]">
+                  Plano Atual: {data.billing.planName}
+                </h3>
+                {data.billing.plan === "PRO" && <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0">Premium Ativo</Badge>}
+              </div>
+              <p className="text-sm text-[var(--ink-60)]">
+                {data.billing.plan === "FREE" 
+                  ? `Você já utilizou ${data.billing.currentAppointments} de ${data.billing.maxAppointments} agendamentos gratuitos neste mês.`
+                  : "Você tem agendamentos ilimitados e lembretes automáticos ativados!"}
+              </p>
+            </div>
+            {data.billing.plan === "FREE" && (
+              <Button onClick={handleUpgrade} className="w-full sm:w-auto bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white font-bold shadow-md transition-all">
+                Fazer Upgrade para o Pro
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

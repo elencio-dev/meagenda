@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getSessionUser } from "@/lib/auth-helpers"
+import { getPlanLimits } from "@/lib/billing"
 
 export async function GET(request: NextRequest) {
   const user = await getSessionUser(request)
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
     const tomorrow = new Date(startOfToday)
     tomorrow.setDate(tomorrow.getDate() + 1)
 
-    const [todayAppointments, totalClients, profissionais, newClientsThisMonth] = await Promise.all([
+    const [todayAppointments, totalClients, profissionais, newClientsThisMonth, billing] = await Promise.all([
       prisma.agendamento.findMany({
         where: { userId, date: { gte: startOfToday }, NOT: { status: "cancelled" } },
         take: 10,
@@ -41,9 +42,11 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
+      getPlanLimits(userId),
     ])
 
     return NextResponse.json({
+      billing,
       stats: {
         todayCount: todayAppointments.length, // Usaremos para contar os próximos
         totalClients,
