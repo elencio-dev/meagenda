@@ -31,7 +31,7 @@ type DashboardData = {
     totalClients: number
     newClientsThisMonth: number
   }
-  todayAppointments: Array<{
+  upcomingAppointments: Array<{
     id: number
     client: string
     service: string
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
 
   const stats = data ? [
     {
-      title: "Agendamentos Hoje",
+      title: "Próximos Agendamentos",
       value: String(data.stats.todayCount),
       change: `+${data.stats.todayCount}`,
       changeLabel: "hoje",
@@ -172,21 +172,21 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2">
           <Card className="border-[var(--ink-10)] shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="font-sans text-xl text-[var(--ink)]">Agendamentos de Hoje</CardTitle>
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">Próximos Agendamentos</CardTitle>
               <Button variant="ghost" className="text-[var(--coral)] hover:text-[var(--coral-dark)] hover:bg-[var(--coral-pale)]">
                 Ver todos
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              {(data?.todayAppointments ?? []).length === 0 ? (
+              {(data?.upcomingAppointments ?? []).length === 0 ? (
                 <div className="p-12 text-center">
                   <Calendar className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-                  <p className="text-[var(--ink-60)]">Nenhum agendamento para hoje</p>
+                  <p className="text-[var(--ink-60)]">Nenhum agendamento futuro</p>
                 </div>
               ) : (
                 <div className="divide-y divide-[var(--ink-10)]">
-                  {(data?.todayAppointments ?? []).map((appointment) => (
+                  {(data?.upcomingAppointments ?? []).map((appointment) => (
                     <div key={appointment.id} className="flex items-center gap-4 p-4 hover:bg-[var(--paper)] transition-colors">
                       <div className="text-center min-w-[60px]">
                         <p className="text-lg font-semibold text-[var(--ink)]">{appointment.time}</p>

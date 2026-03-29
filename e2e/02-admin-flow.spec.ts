@@ -45,13 +45,12 @@ test.describe("Fluxo do Admin - Login e Dashboard", () => {
     // Aguardar o carregamento dos dados (loading spinner desaparece)
     await page.waitForSelector("[class*='animate-spin']", { state: "detached", timeout: 10_000 })
 
-    // Verificar que a seção "Agendamentos de Hoje" existe
+    // Verificar que a seção "Próximos Agendamentos" existe
     await expect(
-      page.locator("text=/Agendamentos de Hoje/i")
+      page.locator("text=/Próximos Agendamentos/i")
     ).toBeVisible({ timeout: 8_000 })
 
     // Verificar que o nome do cliente fictício aparece na lista
-    // Nota: isso só funciona se o booking-flow rodou hoje (mesmo dia)
     const clientName = page.locator("text=" + CLIENT_DATA.name)
     await expect(clientName).toBeVisible({ timeout: 8_000 })
   })

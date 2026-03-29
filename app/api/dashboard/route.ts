@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
 
     const [todayAppointments, totalClients, profissionais, newClientsThisMonth] = await Promise.all([
       prisma.agendamento.findMany({
-        where: { userId, date: { gte: today, lt: tomorrow }, NOT: { status: "cancelled" } },
+        where: { userId, date: { gte: today }, NOT: { status: "cancelled" } },
+        take: 10,
         include: {
           cliente: { select: { name: true } },
           servico: { select: { name: true, duration: true } },
@@ -40,11 +41,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       stats: {
-        todayCount: todayAppointments.length,
+        todayCount: todayAppointments.length, // Usaremos para contar os próximos
         totalClients,
         newClientsThisMonth,
       },
-      todayAppointments: todayAppointments.map(a => ({
+      upcomingAppointments: todayAppointments.map(a => ({
         id: a.id,
         client: a.cliente.name,
         service: a.servico.name,
