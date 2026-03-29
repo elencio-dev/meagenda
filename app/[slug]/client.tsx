@@ -103,7 +103,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
         handleNextStep()
       } else {
         const err = await agRes.json()
-        alert(err.error || "Este horário já não está mais disponível.")
+        alert(err.error + (err.details ? "\n\nDetalhes do Erro: " + err.details : "") || "Este horário já não está mais disponível.")
       }
     } catch (e) {
       console.error(e)
