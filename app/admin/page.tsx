@@ -11,8 +11,10 @@ import {
   Check,
   X as XIcon,
   Phone,
-  Loader2
+  Loader2,
+  CheckCircle2
 } from "lucide-react"
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -34,6 +36,7 @@ type DashboardData = {
   upcomingAppointments: Array<{
     id: number
     client: string
+    clientPhone: string
     service: string
     date: string
     time: string
@@ -81,6 +84,9 @@ export default function AdminDashboard() {
   const getStatusBadge = (status: string) => {
     if (status === "confirmed") {
       return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Confirmado</Badge>
+    }
+    if (status === "completed") {
+      return <Badge className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0">Concluído</Badge>
     }
     return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">Pendente</Badge>
   }
@@ -224,13 +230,21 @@ export default function AdminDashboard() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => updateStatus(appointment.id, "confirmed")}>
-                            <Check className="mr-2 h-4 w-4" />
-                            Confirmar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          {appointment.status === "pending" && (
+                            <DropdownMenuItem onClick={() => updateStatus(appointment.id, "confirmed")}>
+                              <Check className="mr-2 h-4 w-4" />
+                              Confirmar
+                            </DropdownMenuItem>
+                          )}
+                          {appointment.status === "confirmed" && (
+                            <DropdownMenuItem onClick={() => updateStatus(appointment.id, "completed")}>
+                              <CheckCircle2 className="mr-2 h-4 w-4" />
+                              Concluir Atendimento
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => window.open(`https://wa.me/55${appointment.clientPhone.replace(/\D/g, '')}`, '_blank')}>
                             <Phone className="mr-2 h-4 w-4" />
-                            Ligar
+                            Ligar / WhatsApp
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-[var(--error)]" onClick={() => updateStatus(appointment.id, "cancelled")}>
                             <XIcon className="mr-2 h-4 w-4" />
@@ -254,15 +268,19 @@ export default function AdminDashboard() {
               <CardTitle className="font-sans text-xl text-[var(--ink)]">Ações Rápidas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
-                <Calendar className="mr-2 h-4 w-4" />
-                Novo Agendamento
-              </Button>
-              <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
-                <Users className="mr-2 h-4 w-4" />
-                Adicionar Cliente
-              </Button>
-              <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
+              <Link href="/admin/agendamentos" className="block">
+                <Button className="w-full justify-start bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Gerenciar Agendamentos
+                </Button>
+              </Link>
+              <Link href="/admin/clientes" className="block">
+                <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
+                  <Users className="mr-2 h-4 w-4" />
+                  Gerenciar Clientes
+                </Button>
+              </Link>
+              <Button onClick={() => alert("Em breve! Esta funcionalidade estará disponível na próxima atualização.")} variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
                 <Clock className="mr-2 h-4 w-4" />
                 Bloquear Horário
               </Button>

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         where: { userId, date: { gte: startOfToday }, NOT: { status: "cancelled" } },
         take: 10,
         include: {
-          cliente: { select: { name: true } },
+          cliente: { select: { name: true, phone: true } },
           servico: { select: { name: true, duration: true } },
           profissional: { select: { name: true } },
         },
@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
       upcomingAppointments: todayAppointments.map(a => ({
         id: a.id,
         client: a.cliente.name,
+        clientPhone: a.cliente.phone,
         service: a.servico.name,
         date: new Date(a.date).toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit' }),
         time: a.time,
