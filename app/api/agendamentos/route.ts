@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
       status: "confirmed",
       price: servico.price,
       notes: notes ?? "",
-      empresa: { connect: { id: userId } },
-      cliente: { connect: { id: clienteId } },
-      servico: { connect: { id: servicoId } }
+      userId,
+      clienteId,
+      servicoId
     }
     if (profissionalId) dataPayload.profissionalId = profissionalId
 
