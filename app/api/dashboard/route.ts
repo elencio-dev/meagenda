@@ -9,31 +9,35 @@ export async function GET(request: NextRequest) {
   const userId = user.id
 
   try {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1)
+    // Para evitar bugs de fuso horário onde o "hoje" do servidor Vercel é horas à frente,
+    // pegamos sempre a string "YYYY-MM-DD" e zeramos como UTC, ficando igual ao banco de dados.
+    const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" }).split("T")[0]
+    const startOfToday = new Date(todayStr)
+    
+    const tomorrow = new Date(startOfToday)
+    tomorrow.setDate(tomorrow.getDate() + 1)
 
     const [todayAppointments, totalClients, profissionais, newClientsThisMonth] = await Promise.all([
       prisma.agendamento.findMany({
-        where: { userId, date: { gte: today }, NOT: { status: "cancelled" } },
+        where: { userId, date: { gte: startOfToday }, NOT: { status: "cancelled" } },
         take: 10,
         include: {
           cliente: { select: { name: true } },
           servico: { select: { name: true, duration: true } },
           profissional: { select: { name: true } },
         },
-        orderBy: { time: "asc" },
+        orderBy: [{ date: "asc" }, { time: "asc" }],
       }),
       prisma.cliente.count({ where: { userId } }),
       prisma.profissional.findMany({
         where: { userId },
-        include: { _count: { select: { agendamentos: { where: { date: { gte: today, lt: tomorrow } } } } } },
+        include: { _count: { select: { agendamentos: { where: { date: { gte: startOfToday, lt: tomorrow } } } } } },
       }),
       prisma.cliente.count({
         where: {
           userId,
           createdAt: {
-            gte: new Date(today.getFullYear(), today.getMonth(), 1),
+            gte: new Date(startOfToday.getFullYear(), startOfToday.getMonth(), 1),
           },
         },
       }),
@@ -49,6 +53,7 @@ export async function GET(request: NextRequest) {
         id: a.id,
         client: a.cliente.name,
         service: a.servico.name,
+        date: new Date(a.date).toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit' }),
         time: a.time,
         duration: `${a.servico.duration}min`,
         professional: a.profissional?.name ?? "Sem profissional",

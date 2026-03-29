@@ -35,6 +35,7 @@ type DashboardData = {
     id: number
     client: string
     service: string
+    date: string
     time: string
     duration: string
     professional: string
@@ -187,21 +188,29 @@ export default function AdminDashboard() {
               ) : (
                 <div className="divide-y divide-[var(--ink-10)]">
                   {(data?.upcomingAppointments ?? []).map((appointment) => (
-                    <div key={appointment.id} className="flex items-center gap-4 p-4 hover:bg-[var(--paper)] transition-colors">
-                      <div className="text-center min-w-[60px]">
-                        <p className="text-lg font-semibold text-[var(--ink)]">{appointment.time}</p>
+                    <div key={appointment.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 hover:bg-[var(--paper)] transition-colors">
+                      <div className="flex sm:block justify-between items-center sm:text-center min-w-[70px]">
+                        <div className="flex gap-2 sm:block">
+                          <p className="text-sm font-medium text-[var(--coral)]">{appointment.date}</p>
+                          <p className="text-lg font-semibold text-[var(--ink)]">{appointment.time}</p>
+                        </div>
                         <p className="text-xs text-[var(--ink-60)]">{appointment.duration}</p>
+                        <div className="sm:hidden block">
+                          {getStatusBadge(appointment.status)}
+                        </div>
                       </div>
                       
-                      <Avatar className="h-12 w-12 border-2 border-[var(--ink-10)]">
-                        <AvatarFallback className="bg-[var(--coral-pale)] text-[var(--coral-dark)]">
-                          {appointment.client.split(" ").map(n => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <Avatar className="h-12 w-12 border-2 border-[var(--ink-10)]">
+                          <AvatarFallback className="bg-[var(--coral-pale)] text-[var(--coral-dark)]">
+                            {appointment.client.split(" ").map(n => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
 
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-[var(--ink)] truncate">{appointment.client}</p>
-                        <p className="text-sm text-[var(--ink-60)]">{appointment.service} com {appointment.professional}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-[var(--ink)] truncate">{appointment.client}</p>
+                          <p className="text-sm text-[var(--ink-60)]">{appointment.service} com {appointment.professional}</p>
+                        </div>
                       </div>
 
                       <div className="hidden sm:block">
