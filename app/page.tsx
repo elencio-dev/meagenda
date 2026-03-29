@@ -347,6 +347,10 @@ export default function LandingPage() {
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Página de agendamento
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
                   Agendamentos ilimitados
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
