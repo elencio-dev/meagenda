@@ -78,9 +78,9 @@ test.describe("Fluxo de Agendamento do Cliente", () => {
     // Verificar que o número de protocolo está visível  (formato: Nº 000001)
     await expect(page.locator("text=/Nº \\d+/")).toBeVisible()
 
-    // Verificar botão de baixar PDF/comprovante
+    // Verificar botão de Google Calendar
     await expect(
-      page.locator("button, a").filter({ hasText: /baixar|pdf|comprovante/i }).first()
+      page.locator("button, a").filter({ hasText: /google|calendar/i }).first()
     ).toBeVisible()
   })
 })
