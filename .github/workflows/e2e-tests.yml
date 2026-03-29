@@ -57,9 +57,9 @@ jobs:
         run: npx prisma generate
 
       - name: 🗄️ Prisma - Enviar estrutura do banco
-        # Usamos push no invés de migrate deploy apenas neste teste 
+        # Usamos push invés de migrate deploy apenas neste teste 
         # para garantir que as tabelas sejam injetadas no banco de testes zerado
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push
 
       - name: 🏗️ Fazer a Build (Produção)
         # Como mudamos nosso "playwright.config.ts" para usar "npm run start" via "CI=true",

@@ -15,3 +15,7 @@ node_modules
 .next/
 .DS_Store
 /generated/prisma
+
+# Playwright
+playwright-report/
+test-results/
