@@ -23,24 +23,29 @@ export function ProfessionalSelect({ profissionais, selectedId, onSelect }: Prof
           key={p.id}
           onClick={() => onSelect(p.id)}
           className={cn(
-            "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200",
+            "relative w-full flex items-center gap-4 p-4 lg:p-5 rounded-2xl border text-left transition-all duration-300 ease-out active:scale-[0.98]",
             selectedId === p.id
-              ? "border-coral bg-coral-pale shadow-sm"
-              : "border-ink-10 bg-card hover:border-coral hover:shadow-sm"
+              ? "border-[var(--coral)] bg-[var(--coral-pale)] shadow-md ring-1 ring-[var(--coral)]/50 z-10"
+              : "border-[var(--ink-10)] bg-[var(--card)] hover:border-[var(--coral-light)] hover:shadow-sm"
           )}
         >
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-coral to-coral-dark flex items-center justify-center font-serif text-lg text-white flex-shrink-0">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--coral)] to-[var(--coral-dark)] flex items-center justify-center font-serif text-lg text-white flex-shrink-0 shadow-sm">
             {getInitials(p.name)}
           </div>
-          <div className="flex-1 text-left">
-            <p className="font-semibold text-sm text-ink">{p.name}</p>
-            <p className="text-xs text-ink-60 mt-0.5">{p.role}</p>
+          <div className="flex-1 text-left min-w-0 pr-4">
+            <p className={cn("font-semibold text-[15px] transition-colors", selectedId === p.id ? "text-[var(--ink)]" : "text-[var(--ink)]")}>{p.name}</p>
+            <p className="text-xs font-medium text-[var(--ink-60)] mt-0.5 truncate">{p.role}</p>
           </div>
-          <div className={cn(
-            "w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
-            selectedId === p.id ? "border-coral bg-coral" : "border-ink-10"
-          )}>
-            {selectedId === p.id && <Check className="w-3.5 h-3.5 text-white" />}
+          
+          <div className="flex items-center flex-shrink-0">
+            <div className={cn(
+              "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
+              selectedId === p.id 
+                ? "border-[var(--coral)] bg-[var(--coral)] shadow-sm scale-110" 
+                : "border-[var(--ink-20)] bg-transparent"
+            )}>
+              {selectedId === p.id && <Check className="w-3.5 h-3.5 text-white animate-in zoom-in" />}
+            </div>
           </div>
         </button>
       ))}

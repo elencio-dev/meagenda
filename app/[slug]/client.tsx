@@ -183,12 +183,12 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
           </div>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid lg:grid-cols-[1fr_1.4fr] gap-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
+        <div className="flex flex-col-reverse lg:grid lg:grid-cols-[1fr_1.4fr] gap-8">
           <div className="lg:sticky lg:top-10 lg:self-start">
             <BusinessInfo business={bookingData.business} />
           </div>
-          <div className="bg-[var(--card)] rounded-xl border border-[var(--ink-10)] p-8 shadow-sm">
+          <div className="bg-[var(--card)] rounded-2xl border border-[var(--ink-10)] p-5 sm:p-8 shadow-sm">
             <BookingSteps currentStep={currentStep} />
             <div className="mt-8 relative">{renderStepContent()}</div>
             {currentStep > 1 && currentStep < 6 && (
