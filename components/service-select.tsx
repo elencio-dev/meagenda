@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import { Check, Sparkles, Clock } from "lucide-react"
 
-type Servico = { id: number; name: string; price: number; duration: number; category: string; popular: boolean }
+type Servico = { id: number; name: string; price: number; duration: number; category: string; popular: boolean; imageUrl?: string | null }
 
 interface ServiceSelectProps {
   servicos: Servico[]
@@ -28,7 +28,7 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
     <div className="space-y-4">
       {categories.map(cat => (
         <div key={cat}>
-          <p className="text-xs font-semibold text-ink-60 uppercase tracking-wider mb-2">{cat}</p>
+          <p className="text-xs font-semibold text-[var(--ink-60)] uppercase tracking-wider mb-2">{cat}</p>
           <div className="space-y-2">
             {servicos.filter(s => s.category === cat).map(servico => (
               <button
@@ -42,21 +42,31 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
                     : "border-[var(--ink-10)] bg-[var(--card)] hover:border-[var(--coral-light)] hover:shadow-sm"
                 )}
               >
-                <div className="flex-1 min-w-0 pr-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className={cn("font-semibold text-[15px] transition-colors", selectedId === servico.id ? "text-[var(--ink)]" : "text-[var(--ink)]")}>
-                      {servico.name}
+                <div className="flex flex-1 items-center gap-4 pr-4">
+                  {/* Thumbnail HD */}
+                  {servico.imageUrl && (
+                    <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-[var(--ink-10)] shadow-sm">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={servico.imageUrl} alt={servico.name} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className={cn("font-semibold text-[15px] transition-colors", selectedId === servico.id ? "text-[var(--ink)]" : "text-[var(--ink)]")}>
+                        {servico.name}
+                      </p>
+                      {servico.popular && (
+                        <span className="inline-flex flex-shrink-0 items-center gap-1 px-2.5 py-0.5 bg-[var(--coral)] text-white rounded-full text-[10px] font-bold tracking-wide uppercase">
+                          <Sparkles className="w-3 h-3" /> Popular
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-[var(--ink-60)] flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      {formatDuration(servico.duration)}
                     </p>
-                    {servico.popular && (
-                      <span className="inline-flex flex-shrink-0 items-center gap-1 px-2.5 py-0.5 bg-[var(--coral)] text-white rounded-full text-[10px] font-bold tracking-wide uppercase">
-                        <Sparkles className="w-3 h-3" /> Popular
-                      </span>
-                    )}
                   </div>
-                  <p className="text-xs font-medium text-[var(--ink-60)] flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {formatDuration(servico.duration)}
-                  </p>
                 </div>
 
                 <div className="flex items-center gap-4 flex-shrink-0">

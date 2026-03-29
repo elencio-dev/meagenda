@@ -10,8 +10,10 @@ import {
   Trash2,
   Scissors,
   Sparkles,
-  Loader2
+  Loader2,
+  Image as ImageIcon
 } from "lucide-react"
+import { useSession } from "@/lib/auth-client"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -51,6 +53,7 @@ type Servico = {
   category: string
   active: boolean
   popular: boolean
+  imageUrl?: string | null
 }
 
 const categories = ["Todos", "Cabelo", "Barba", "Coloração", "Tratamento", "Unhas", "Combo"]
@@ -62,7 +65,13 @@ export default function ServicosPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
+  const { data: session } = useSession()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isPro = (session?.user as any)?.planId === "PRO"
+
   // Form state
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
   const [formName, setFormName] = useState("")
   const [formDesc, setFormDesc] = useState("")
   const [formPrice, setFormPrice] = useState("")
@@ -112,6 +121,26 @@ export default function ServicosPage() {
     if (!formName || !formPrice || !formDuration || !formCategory) return
     setSubmitting(true)
     try {
+      let imageUrl = ""
+      if (selectedImage && isPro) {
+        setUploading(true)
+        const formData = new FormData()
+        formData.append("file", selectedImage)
+        try {
+          const uploadRes = await fetch("/api/upload", {
+            method: "POST",
+            body: formData
+          })
+          if (uploadRes.ok) {
+            const uData = await uploadRes.json()
+            imageUrl = uData.url
+          }
+        } catch (e) {
+          console.error("Upload error", e)
+        }
+        setUploading(false)
+      }
+
       await fetch("/api/servicos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,10 +150,11 @@ export default function ServicosPage() {
           price: Number(formPrice),
           duration: Number(formDuration),
           category: formCategory,
+          ...(imageUrl ? { imageUrl } : {})
         }),
       })
       setDialogOpen(false)
-      setFormName(""); setFormDesc(""); setFormPrice(""); setFormDuration(""); setFormCategory("")
+      setFormName(""); setFormDesc(""); setFormPrice(""); setFormDuration(""); setFormCategory(""); setSelectedImage(null)
       fetchServices()
     } finally {
       setSubmitting(false)
@@ -206,13 +236,31 @@ export default function ServicosPage() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2 pt-2 border-t border-[var(--ink-10)]">
+                <Label className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[var(--ink-60)]" />
+                  Foto de Demonstração
+                </Label>
+                {isPro ? (
+                  <Input 
+                    type="file" 
+                    accept="image/jpeg, image/png, image/webp" 
+                    onChange={e => setSelectedImage(e.target.files?.[0] || null)}
+                    className="border-[var(--ink-10)]"
+                  />
+                ) : (
+                  <div className="bg-[var(--coral-pale)] text-[var(--coral-dark)] p-3 rounded-lg text-sm border border-[var(--coral)]/20 leading-relaxed">
+                    ⭐ <strong>Recurso Premium:</strong> Faça upgrade para o Plano PRO para exibir uma vitrine fotográfica dos seus serviços.
+                  </div>
+                )}
+              </div>
               <Button 
-                className="w-full bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white"
+                className="w-full bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white mt-2"
                 onClick={handleCreate}
-                disabled={submitting}
+                disabled={submitting || uploading}
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Criar Serviço
+                {(submitting || uploading) ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {uploading ? "Enviando Foto..." : "Criar Serviço"}
               </Button>
             </div>
           </DialogContent>
@@ -285,15 +333,22 @@ export default function ServicosPage() {
               <CardContent className="p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center",
-                      service.active ? "bg-[var(--coral-pale)]" : "bg-[var(--ink-10)]"
-                    )}>
-                      <Scissors className={cn(
-                        "h-5 w-5",
-                        service.active ? "text-[var(--coral)]" : "text-[var(--ink-60)]"
-                      )} />
-                    </div>
+                    {service.imageUrl ? (
+                      <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[var(--ink-10)]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
+                        service.active ? "bg-[var(--coral-pale)]" : "bg-[var(--ink-10)]"
+                      )}>
+                        <Scissors className={cn(
+                          "h-5 w-5",
+                          service.active ? "text-[var(--coral)]" : "text-[var(--ink-60)]"
+                        )} />
+                      </div>
+                    )}
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">

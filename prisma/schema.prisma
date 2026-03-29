@@ -124,6 +124,7 @@ model Servico {
   price        Float
   duration     Int
   category     String
+  imageUrl     String?       // Campo opcional para a imagem de catálogo do Serviço (Pro apenas)
   active       Boolean       @default(true)
   popular      Boolean       @default(false)
   createdAt    DateTime      @default(now())
