@@ -142,6 +142,12 @@ export default function AgendamentosPage() {
 
   useEffect(() => {
     fetchAppointments()
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search)
+      if (p.get("block") === "true") {
+        setBlockDialogOpen(true)
+      }
+    }
   }, [fetchAppointments])
 
   useEffect(() => {

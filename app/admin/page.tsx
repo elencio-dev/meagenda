@@ -280,10 +280,12 @@ export default function AdminDashboard() {
                   Gerenciar Clientes
                 </Button>
               </Link>
-              <Button onClick={() => alert("Em breve! Esta funcionalidade estará disponível na próxima atualização.")} variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
-                <Clock className="mr-2 h-4 w-4" />
-                Bloquear Horário
-              </Button>
+              <Link href="/admin/agendamentos?block=true" className="block">
+                <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
+                  <Clock className="mr-2 h-4 w-4" />
+                  Bloquear Horário
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
