@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar } from "lucide-react"
+import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar, X as XIcon } from "lucide-react"
 
 export default function LandingPage() {
   return (
@@ -17,6 +17,7 @@ export default function LandingPage() {
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--ink-60)]">
             <Link href="#features" className="hover:text-[var(--coral)] transition-colors">Como Funciona</Link>
+            <Link href="#pricing" className="hover:text-[var(--coral)] transition-colors">Planos</Link>
             <Link href="#testimonials" className="hover:text-[var(--coral)] transition-colors">Avaliações</Link>
           </nav>
 
@@ -42,22 +43,30 @@ export default function LandingPage() {
             Vagas Ilimitadas Liberadas
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 leading-tight">
-            <span className="text-[var(--ink)]">Agende mais.</span>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
+            <span className="text-[var(--ink)]">Sua agenda lotada e organizada</span>
             <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--ink)] to-[var(--ink-60)]">Trabalhe menos.</span>
+            <span className="text-[#2F9E73]">no piloto automático.</span>
           </h1>
           
           <p className="text-lg md:text-xl text-[var(--ink-60)] max-w-2xl mx-auto mb-12 leading-relaxed">
-            A plataforma moderna para profissionais de sucesso. Tudo o que você precisa para automatizar sua agenda, atrair clientes e expandir seu negócio de forma inteligente.
+            Simplifique a marcação de horários. Deixe seu cliente escolher, reservar e confirmar sem precisar trocar uma única mensagem.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/register" className="w-full sm:w-auto px-8 py-4 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all shadow-[0_8px_24px_rgba(232,80,58,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 max-w-xl mx-auto">
+            <div className="flex w-full items-center bg-white border border-[var(--ink-10)] rounded-full px-2 py-1.5 focus-within:ring-2 focus-within:ring-[#2F9E73] focus-within:border-[#2F9E73] transition-all flex-1 shadow-sm">
+              <span className="text-[var(--ink-30)] font-medium pl-4 hidden sm:inline">meagenda.com/</span>
+              <input 
+                type="text" 
+                placeholder="nome-do-seu-salao" 
+                className="flex-1 bg-transparent border-none outline-none px-2 text-[var(--ink)] font-medium placeholder:text-[var(--ink-30)] w-full" 
+              />
+              <Link href="/register" className="px-6 py-3 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all whitespace-nowrap hidden sm:flex items-center gap-2">
+                Começar <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <Link href="/register" className="w-full sm:hidden px-6 py-4 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all flex items-center justify-center gap-2">
               Começar Agora <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-[var(--card)] border border-[var(--ink-10)] text-[var(--ink)] font-medium rounded-full hover:bg-[var(--coral-pale)] hover:border-[var(--coral)] hover:text-[var(--coral-dark)] transition-colors flex items-center justify-center">
-              Ver Demonstração
             </Link>
           </div>
 
@@ -264,6 +273,107 @@ export default function LandingPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing / Planos */}
+      <section id="pricing" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--ink)]">Planos e preços</h2>
+            <p className="text-[var(--ink-60)] text-lg">Comece grátis. Escale quando crescer.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            
+            {/* Grátis Plan */}
+            <div className="bg-[#FAF9F6] rounded-3xl p-8 border border-[var(--ink-10)] shadow-sm">
+              <div className="mb-6">
+                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">Grátis</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">R$ 0</span>
+                  <span className="text-[var(--ink-60)] font-medium">/mês</span>
+                </div>
+                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">Para quem está começando</p>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Página de agendamento
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Até 30 agendamentos/mês
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  1 profissional
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-60)]">
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
+                  Lembretes automáticos
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-60)]">
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
+                  Dashboard de resultados
+                </li>
+              </ul>
+              
+              <div className="text-center">
+                <Link href="/register" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[var(--ink-40)] hover:bg-[var(--ink-10)] transition-all">
+                  Criar conta grátis
+                </Link>
+                <p className="text-[13px] text-[#b33a3a] mt-4 font-medium">Limite de 30 agendamentos/mês</p>
+              </div>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="bg-white rounded-3xl p-8 border-2 border-[#2F9E73] shadow-md relative">
+              <div className="absolute top-0 right-8 -translate-y-1/2">
+                <span className="bg-[#E5F5EF] text-[#2F9E73] text-sm font-semibold px-4 py-1.5 rounded-full">Mais popular</span>
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">Pro</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">R$ 49</span>
+                  <span className="text-[var(--ink-60)] font-medium">/mês</span>
+                </div>
+                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">Para quem quer crescer de verdade</p>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Agendamentos ilimitados
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Até 10 profissionais
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Lembretes automáticos
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Dashboard de resultados
+                </li>
+                <li className="flex items-center gap-3 text-[var(--ink-80)]">
+                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  Suporte prioritário
+                </li>
+              </ul>
+              
+              <div className="text-center mt-auto pt-4">
+                <Link href="/register?plan=pro" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[#2F9E73] hover:text-[#2F9E73] transition-all">
+                  Testar 14 dias grátis
+                </Link>
+              </div>
+            </div>
+            
           </div>
         </div>
       </section>
