@@ -1,26 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getUserId } from "@/lib/auth-helpers"
-
-function generateTimeSlots(start: string, end: string, intervalMin: number) {
-  const slots = []
-  const [sH, sM] = start.split(":").map(Number)
-  const [eH, eM] = end.split(":").map(Number)
-
-  let current = new Date()
-  current.setHours(sH, sM, 0, 0)
-
-  const endTime = new Date()
-  endTime.setHours(eH, eM, 0, 0)
-
-  while (current < endTime) {
-    const h = String(current.getHours()).padStart(2, "0")
-    const m = String(current.getMinutes()).padStart(2, "0")
-    slots.push(`${h}:${m}`)
-    current.setMinutes(current.getMinutes() + intervalMin)
-  }
-  return slots
-}
+import { generateTimeSlots } from "@/lib/scheduling"
 
 export async function GET(request: NextRequest) {
   const userId = await getUserId(request)
