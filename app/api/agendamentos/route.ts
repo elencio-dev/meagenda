@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@/generated/prisma/client"
 import { getUserId, getSessionUser } from "@/lib/auth-helpers"
 import { publicBookingSchema, updateBookingSchema } from "@/lib/validations"
 import { canCreateAppointment } from "@/lib/billing"
@@ -85,12 +86,11 @@ export async function POST(request: NextRequest) {
     // ─── Verificação de conflito de vaga (Agendamentos) ─────────────
     // Se tem profissional: verifica se o profissional está ocupado
     // Se não tem profissional: verifica se a empresa já está com horário ocupado
-    const conflictWhere = profissionalId
+    const conflictWhere: Prisma.AgendamentoWhereInput = profissionalId
       ? { userId, profissionalId: Number(profissionalId), date: { gte: bookingDate, lt: nextDay }, time, NOT: { status: "cancelled" } }
       : { userId, date: { gte: bookingDate, lt: nextDay }, time, NOT: { status: "cancelled" } }
 
     const conflict = await prisma.agendamento.findFirst({
-      // @ts-expect-error - Prisma conditional WhereInput mapping
       where: conflictWhere
     })
 
@@ -103,14 +103,11 @@ export async function POST(request: NextRequest) {
     // ────────────────────────────────────────────────────────────────
 
     // ─── Verificação de Bloqueio Manual ─────────────────────────────
-    const blockWhere: any = {
+    const blockWhere: Prisma.BloqueioWhereInput = {
       userId,
       date: { gte: bookingDate, lt: nextDay },
       time,
-      OR: [{ profissionalId: null }]
-    }
-    if (profissionalId) {
-      blockWhere.OR.push({ profissionalId: Number(profissionalId) })
+      OR: [{ profissionalId: null }, ...(profissionalId ? [{ profissionalId: Number(profissionalId) }] : [])]
     }
 
     const blockConflict = await prisma.bloqueio.findFirst({
@@ -129,7 +126,7 @@ export async function POST(request: NextRequest) {
     const servico = await prisma.servico.findUnique({ where: { id: servicoId } })
     if (!servico) return NextResponse.json({ error: "Serviço não encontrado" }, { status: 404 })
 
-    const dataPayload: any = {
+    const dataPayload: Prisma.AgendamentoUncheckedCreateInput = {
       date: bookingDate,
       time,
       status: "confirmed",
@@ -137,9 +134,9 @@ export async function POST(request: NextRequest) {
       notes: notes ?? "",
       userId,
       clienteId,
-      servicoId
+      servicoId,
+      ...(profissionalId ? { profissionalId: Number(profissionalId) } : {})
     }
-    if (profissionalId) dataPayload.profissionalId = profissionalId
 
     const agendamento = await prisma.agendamento.create({
       data: dataPayload,

@@ -13,3 +13,11 @@ export const authClient = createAuthClient({
 })
 
 export const { signIn, signUp, signOut, useSession } = authClient
+
+// Expose the inferred session user type for consumers that need additional fields
+export type AuthUser = typeof authClient.$Infer.Session.user & {
+  slug?: string
+  phone?: string
+  address?: string
+  description?: string
+}
