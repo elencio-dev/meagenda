@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import * as nodemailer from "nodemailer"
+import { sendReminderEmail } from "@/lib/email"
 
 // Forçamos que essa rota seja dinâmica, pois o Vercel Cron a chamará sem cache.
 export const dynamic = "force-dynamic"
@@ -50,52 +50,23 @@ export async function GET(request: Request) {
 
     let sentCount = 0
 
-    // Configuração Nodemailer (Gmail SMTP / Vercel Env)
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    // Loop de envios
     for (const agendamento of agendamentos) {
-      // Prioridade: Email. Fallback: Log
-      if (agendamento.cliente.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        try {
-          await transporter.sendMail({
-            from: `"MeAgenda Lembretes" <${process.env.EMAIL_USER}>`,
-            to: agendamento.cliente.email,
-            subject: `Lembrete: Seu agendamento na ${agendamento.empresa.name}`,
-            html: `
-              <div style="font-family: sans-serif; color: #333; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <h2 style="color: #2F9E73;">Olá, ${agendamento.cliente.name}!</h2>
-                <p>Este é um lembrete automático do seu compromisso na <b>${agendamento.empresa.name}</b>.</p>
-                <div style="background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                  <p style="margin: 0; font-size: 16px;">📅 <b>Data:</b> ${new Date(agendamento.date).toLocaleDateString("pt-BR")}</p>
-                  <p style="margin: 5px 0 0 0; font-size: 16px;">⏰ <b>Horário:</b> ${agendamento.time}</p>
-                </div>
-                <p>Pedimos que chegue com 10 minutos de antecedência. Caso haja imprevistos, contate o local pelo número: ${agendamento.empresa.phone}</p>
-                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-                <p style="font-size: 12px; color: #64748b;">Este é um e-mail automático gerado pelo sistema MeAgenda. Por favor, não responda.</p>
-              </div>
-            `
-          })
-          console.log(`[LEMBRETE] Email Real (Nodemailer) enviado para ${agendamento.cliente.email}`)
-        } catch (err) {
-          console.error(`[CRON_ERROR] Falha no Nodemailer para ${agendamento.cliente.email}`, err)
-        }
+      if (agendamento.cliente.email) {
+        await sendReminderEmail({
+          clientName: agendamento.cliente.name,
+          clientEmail: agendamento.cliente.email,
+          businessName: agendamento.empresa.name,
+          businessPhone: agendamento.empresa.phone,
+          date: new Date(agendamento.date),
+          time: agendamento.time,
+        })
       } else {
-         console.log(`[LEMBRETE] Simulando WhatsApp... Lembrete dia ${new Date(agendamento.date).toLocaleDateString("pt-BR")} às ${agendamento.time} na ${agendamento.empresa.name} [Destino: ${agendamento.cliente.phone}]. Email SMTP não configurado ou cliente sem e-mail.`)
+        console.log(`[LEMBRETE] Cliente sem e-mail. Destino: ${agendamento.cliente.phone}`)
       }
 
-      // Marca o agendamento como lembrete enviado
       await prisma.agendamento.update({
         where: { id: agendamento.id },
-        data: { reminderSent: true }
+        data: { reminderSent: true },
       })
 
       sentCount++

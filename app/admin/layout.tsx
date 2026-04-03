@@ -6,6 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "@/lib/auth-client"
+import type { AuthUser } from "@/lib/auth-client"
 import {
   LayoutDashboard,
   Calendar,
@@ -45,10 +46,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const { data: session } = useSession()
 
-  const empresa = session?.user
+  const empresa = session?.user as AuthUser | undefined
   const initials = empresa?.name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() ?? "M"
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const slug = (empresa as any)?.slug as string | undefined
+  const slug = empresa?.slug
 
   const handleLogout = async () => {
     await signOut()
