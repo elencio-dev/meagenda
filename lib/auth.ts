@@ -44,6 +44,28 @@ export const auth = betterAuth({
         defaultValue: "",
         input: true,
       },
+      planId: {
+        type: "string",
+        required: false,
+        defaultValue: "FREE",
+      },
+      remindersEnabled: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+      },
+      subscriptionId: {
+        type: "string",
+        required: false,
+      },
+      subscriptionStatus: {
+        type: "string",
+        required: false,
+      },
+      planExpiresAt: {
+        type: "date",
+        required: false,
+      },
     },
   },
   session: {
