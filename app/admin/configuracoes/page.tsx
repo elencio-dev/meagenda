@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Building, Store, Clock, Save, Image as ImageIcon } from "lucide-react"
+import { Loader2, Building, Store, Clock, Save, Image as ImageIcon, CreditCard } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/auth-client"
@@ -12,6 +12,8 @@ export default function ConfiguracoesPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [billing, setBilling] = useState<any>(null)
+  const [loadingBilling, setLoadingBilling] = useState(false)
 
   const [profile, setProfile] = useState({
     name: "", slug: "", phone: "", address: "", description: "", image: "", remindersEnabled: true
@@ -36,6 +38,9 @@ export default function ConfiguracoesPage() {
             end: data.configs.workHourEnd || h.end,
             interval: data.configs.workInterval || h.interval,
           }))
+        }
+        if (data.billing) {
+           setBilling(data.billing)
         }
       })
       .catch(console.error)
@@ -84,6 +89,38 @@ export default function ConfiguracoesPage() {
       setError("Erro inesperado ao salvar horas.")
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleSubscribe = async () => {
+    setLoadingBilling(true)
+    try {
+      const res = await fetch("/api/billing/subscribe", { method: "POST" })
+      if (!res.ok) throw new Error("Falha ao iniciar assinatura")
+      const { initPoint } = await res.json()
+      window.location.href = initPoint
+    } catch {
+      alert("Erro ao realizar upgrade.")
+      setLoadingBilling(false)
+    }
+  }
+
+  const handleCancelSubscription = async () => {
+    if (!confirm("Tem certeza que deseja cancelar sua assinatura PRO? Seu plano continuará ativo por 3 dias e depois será migrado para o Gratuito.")) return
+    
+    setLoadingBilling(true)
+    try {
+      const res = await fetch("/api/billing/cancel", { method: "POST" })
+      if (!res.ok) throw new Error("Erros ao cancelar no Mercado Pago")
+      
+      alert("Assinatura cancelada com sucesso.")
+      // Re-fetch configuracoes to get updated billing
+      const freshData = await fetch("/api/configuracoes").then(r => r.json())
+      if (freshData.billing) setBilling(freshData.billing)
+    } catch {
+      alert("Erro ao tentar cancelar a assinatura.")
+    } finally {
+      setLoadingBilling(false)
     }
   }
 
@@ -268,6 +305,77 @@ export default function ConfiguracoesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Plano & Faturamento */}
+      {billing && (
+        <Card className="border-[var(--ink-10)]">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-[var(--coral)]" />
+              <CardTitle className="font-sans text-xl">Plano & Faturamento</CardTitle>
+            </div>
+            <CardDescription>Gerencie sua assinatura, status e consumo mensal</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="p-5 border border-[var(--ink-10)] rounded-xl bg-[var(--ink-5)] space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h3 className="font-medium text-[var(--ink)] text-lg">Meu Plano: {billing.planName}</h3>
+                  <p className="text-sm text-[var(--ink-60)]">
+                    {billing.plan === "FREE" 
+                      ? "Agendamentos gratuitos até 30 clientes no mês."
+                      : "Agendamentos ilimitados e lembretes automáticos."}
+                  </p>
+                </div>
+                
+                {billing.plan === "PRO" && billing.subscriptionStatus === "authorized" && (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Ativo</span>
+                )}
+                {billing.plan === "PRO" && billing.subscriptionStatus === "paused" && (
+                   <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Pagamento Pendente</span>
+                )}
+                {billing.plan === "PRO" && billing.subscriptionStatus === "cancelled" && (
+                   <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Cancelado</span>
+                )}
+              </div>
+              
+              {billing.plan === "FREE" && (
+                <div className="pt-2 border-t border-[var(--ink-10)]">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-[var(--ink)]">Uso Mensal</span>
+                    <span className="text-sm text-[var(--ink-60)]">{billing.currentAppointments} / 30</span>
+                  </div>
+                  <div className="w-full bg-[var(--ink-10)] rounded-full h-2 mb-4">
+                    <div className="bg-[var(--coral)] h-2 rounded-full" style={{ width: `${billing.usagePercentage}%` }}></div>
+                  </div>
+                  
+                  <Button onClick={handleSubscribe} disabled={loadingBilling} className="w-full sm:w-auto bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white font-medium shadow-sm transition-all gap-2">
+                    {loadingBilling ? <Loader2 className="h-4 w-4 animate-spin" /> : "Assinar Plano PRO — R$49,90/mês"}
+                  </Button>
+                </div>
+              )}
+
+              {billing.plan === "PRO" && billing.planExpiresAt && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-amber-800 text-sm font-medium">
+                    Atenção: Sua assinatura entrou em período de carência e expira em {new Date(billing.planExpiresAt).toLocaleDateString('pt-BR')} às {new Date(billing.planExpiresAt).toLocaleTimeString('pt-BR')}.
+                  </p>
+                </div>
+              )}
+
+              {billing.plan === "PRO" && billing.subscriptionStatus === "authorized" && (
+                <div className="pt-4 flex justify-end">
+                   <Button onClick={handleCancelSubscription} disabled={loadingBilling} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
+                     {loadingBilling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                     Cancelar Assinatura
+                   </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
     </div>
   )
 }

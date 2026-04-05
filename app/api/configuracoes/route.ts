@@ -27,9 +27,14 @@ export async function GET(request: NextRequest) {
     const configs = await prisma.configuracao.findMany({
       where: { userId: user.id },
     })
+    
+    // Add billing info
+    const { getPlanLimits } = await import("@/lib/billing")
+    const billing = await getPlanLimits(user.id)
 
     return NextResponse.json({
       profile: dbUser,
+      billing,
       configs: configs.reduce((acc, curr) => {
         acc[curr.key] = curr.value
         return acc
