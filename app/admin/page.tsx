@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { 
   Calendar, 
   Users, 
@@ -64,6 +64,14 @@ type DashboardData = {
 }
 
 export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-[400px] gap-4"><Loader2 className="h-10 w-10 animate-spin text-[var(--coral)]" /><p className="text-[var(--ink-60)]">Carregando dashboard...</p></div>}>
+      <AdminDashboardContent />
+    </Suspense>
+  )
+}
+
+function AdminDashboardContent() {
   const searchParams = useSearchParams()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
