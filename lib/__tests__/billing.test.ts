@@ -32,6 +32,25 @@ describe("canCreateAppointment", () => {
     expect(mockCount).not.toHaveBeenCalled()
   })
 
+  it("returns true for PRO user with planExpiresAt in the future", async () => {
+    const futureDate = new Date()
+    futureDate.setDate(futureDate.getDate() + 3)
+    mockFindUnique.mockResolvedValue({ ...PRO_USER, planExpiresAt: futureDate })
+    
+    const result = await canCreateAppointment(PRO_USER.id)
+    expect(result).toBe(true)
+  })
+
+  it("returns false for PRO user with planExpiresAt in the past", async () => {
+    const pastDate = new Date()
+    pastDate.setDate(pastDate.getDate() - 1)
+    mockFindUnique.mockResolvedValue({ ...PRO_USER, planExpiresAt: pastDate })
+    
+    const result = await canCreateAppointment(PRO_USER.id)
+    expect(result).toBe(false)
+  })
+
+
   it("returns true for FREE users below the 30-appointment limit", async () => {
     mockFindUnique.mockResolvedValue(FREE_USER)
     mockCount.mockResolvedValue(15)
