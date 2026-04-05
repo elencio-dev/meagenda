@@ -14,6 +14,7 @@ import {
   Loader2,
   CheckCircle2
 } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -63,8 +64,11 @@ type DashboardData = {
 }
 
 export default function AdminDashboard() {
+  const searchParams = useSearchParams()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const isUpgradeSuccess = searchParams.get("upgrade") === "success"
 
   const fetchDashboard = async () => {
     setLoading(true)
@@ -83,12 +87,11 @@ export default function AdminDashboard() {
 
   const handleUpgrade = async () => {
     try {
-      if (!confirm("Simular contratação do Plano Pro por R$49,00?")) return
       setLoading(true)
-      const res = await fetch("/api/billing/upgrade", { method: "POST" })
+      const res = await fetch("/api/billing/subscribe", { method: "POST" })
       if (!res.ok) throw new Error("Falha no upgrade")
-      alert("Upgrade realizado com sucesso! Bem-vindo ao PRO.")
-      fetchDashboard()
+      const { initPoint } = await res.json()
+      window.location.href = initPoint
     } catch(err) {
       console.error(err)
       alert("Erro ao realizar upgrade.")
@@ -175,6 +178,15 @@ export default function AdminDashboard() {
         <h1 className="font-sans text-3xl text-[var(--ink)]">Dashboard</h1>
         <p className="text-[var(--ink-60)] mt-1">Visão geral do seu negócio</p>
       </div>
+
+      {isUpgradeSuccess && (
+        <div className="bg-emerald-50 border border-emerald-400 text-emerald-800 px-4 py-3 rounded relative mb-4">
+          <strong className="font-bold flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5" /> Parabéns!
+          </strong>
+          <span className="block sm:inline mt-1">Sua conta MeAgenda PRO foi ativada com sucesso. Obrigado por assinar!</span>
+        </div>
+      )}
 
       {/* Banner de Plano */}
       {data?.billing && (
