@@ -8,6 +8,7 @@ export interface CreateSubscriptionResult {
 export interface SubscriptionStatusResult {
   status: string;
   payerEmail: string;
+  externalReference: string;
 }
 
 const MP_API_BASE = "https://api.mercadopago.com"
@@ -82,7 +83,8 @@ export async function getSubscription(subscriptionId: string): Promise<Subscript
 
   return {
     status: data.status,
-    payerEmail: data.payer_email
+    payerEmail: data.payer_email,
+    externalReference: data.external_reference
   }
 }
 
