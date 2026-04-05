@@ -48,10 +48,15 @@ export async function hasProFeatures(userId: string) {
 export async function canCreateAppointment(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { planId: true },
+    select: { planId: true, planExpiresAt: true },
   })
 
-  if (user?.planId === "PRO") return true
+  if (user?.planId === "PRO") {
+    if (user.planExpiresAt && user.planExpiresAt < new Date()) {
+      return false
+    }
+    return true
+  }
 
   const count = await getMonthlyCount(userId)
   return count < 30
@@ -63,7 +68,7 @@ export async function canCreateAppointment(userId: string) {
 export async function getPlanLimits(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { planId: true, remindersEnabled: true },
+    select: { planId: true, remindersEnabled: true, subscriptionStatus: true, planExpiresAt: true },
   })
 
   if (user?.planId === "PRO") {
@@ -75,6 +80,8 @@ export async function getPlanLimits(userId: string) {
       usagePercentage: 0,
       hasReminders: true,
       remindersEnabled: user.remindersEnabled,
+      subscriptionStatus: user.subscriptionStatus,
+      planExpiresAt: user.planExpiresAt,
     }
   }
 
@@ -88,5 +95,7 @@ export async function getPlanLimits(userId: string) {
     usagePercentage: Math.min((appointmentsCount / 30) * 100, 100),
     hasReminders: false,
     remindersEnabled: user?.remindersEnabled ?? true,
+    subscriptionStatus: user?.subscriptionStatus,
+    planExpiresAt: user?.planExpiresAt,
   }
 }
