@@ -24,8 +24,13 @@ model user {
   phone         String    @default("")
   address       String    @default("")
   description   String    @default("")
-  planId        String    @default("FREE") // "FREE" ou "PRO"
-  remindersEnabled Boolean @default(true) // Controle do dashboard para não enviar lembretes se o admin não quiser
+  planId             String    @default("FREE") // "FREE" ou "PRO"
+  remindersEnabled   Boolean   @default(true) // Controle do dashboard para não enviar lembretes se o admin não quiser
+
+  // Mercado Pago Subscription
+  subscriptionId     String?   // ID da preapproval no Mercado Pago
+  subscriptionStatus String?   // "authorized" | "paused" | "cancelled"
+  planExpiresAt      DateTime? // deadline do grace period (null = sem expiração pendente)
 
   sessions      session[]
   accounts      account[]
