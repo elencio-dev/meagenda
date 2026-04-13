@@ -34,7 +34,8 @@ export async function createSubscription(planId: string, payerEmail: string, use
       payer_email: payerEmail,
       external_reference: userId,
       reason: "MeAgenda PRO",
-      back_url: "https://meagendaqui.shop/admin?upgrade=success"
+      back_url: "https://meagendaqui.shop/admin?upgrade=success",
+      status: "pending"
     })
   })
 
