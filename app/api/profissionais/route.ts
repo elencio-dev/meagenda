@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { getUserId, getSessionUser } from "@/lib/auth-helpers"
+import { findProfessionals, createProfessional, updateProfessional, deleteProfessional } from "@/lib/professional-service"
 
 export async function GET(request: NextRequest) {
   const userId = await getUserId(request)
   if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
   try {
-    const profissionais = await prisma.profissional.findMany({
-      where: { userId, available: true },
-      orderBy: { name: "asc" },
-    })
+    const profissionais = await findProfessionals(userId)
     return NextResponse.json(profissionais)
   } catch (error) {
     console.error("[GET /api/profissionais]", error)
@@ -24,12 +21,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const profissional = await prisma.profissional.create({
-      data: { userId: user.id, name: body.name, role: body.role },
-    })
+    const profissional = await createProfessional({ userId: user.id, ...body })
     return NextResponse.json(profissional, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[POST /api/profissionais]", error)
+    if (error?.statusCode) {
+      return NextResponse.json({ error: error.message, details: error.details }, { status: error.statusCode })
+    }
     return NextResponse.json({ error: "Erro ao criar profissional" }, { status: 500 })
   }
 }
@@ -41,13 +39,13 @@ export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
     const { id, ...data } = body
-    const profissional = await prisma.profissional.update({
-      where: { id, userId: user.id },
-      data,
-    })
+    const profissional = await updateProfessional(id, user.id, data)
     return NextResponse.json(profissional)
-  } catch (error) {
+  } catch (error: any) {
     console.error("[PATCH /api/profissionais]", error)
+    if (error?.statusCode) {
+      return NextResponse.json({ error: error.message, details: error.details }, { status: error.statusCode })
+    }
     return NextResponse.json({ error: "Erro ao atualizar profissional" }, { status: 500 })
   }
 }
@@ -58,10 +56,13 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const id = Number(request.nextUrl.searchParams.get("id"))
-    await prisma.profissional.delete({ where: { id, userId: user.id } })
+    await deleteProfessional(id, user.id)
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[DELETE /api/profissionais]", error)
+    if (error?.statusCode) {
+      return NextResponse.json({ error: error.message, details: error.details }, { status: error.statusCode })
+    }
     return NextResponse.json({ error: "Erro ao deletar profissional" }, { status: 500 })
   }
 }
