@@ -1,0 +1,60 @@
+{
+  "LandingPage": {
+    "nav_howitworks": "How it works",
+    "nav_pricing": "Pricing",
+    "nav_testimonials": "Testimonials",
+    "nav_login": "Sign In",
+    "nav_register": "Create Account",
+
+    "hero_badge": "Unlimited Slots Unlocked",
+    "hero_title_1": "Your schedule fully booked and organized",
+    "hero_title_2": "on autopilot.",
+    "hero_subtitle": "Simplify appointment scheduling. Let your clients choose, book, and confirm without exchanging a single message.",
+    "hero_input_placeholder": "your-salon-name",
+    "hero_button": "Get Started",
+    "hero_button_mobile": "Start Now",
+    "hero_social_proof": "Trusted by {count}+ businesses worldwide",
+
+    "features_title": "How the platform works",
+    "features_subtitle": "An automatic and smart flow that works for you 24/7.",
+    "feature_1_title": "Share your link",
+    "feature_1_desc": "Promote your exclusive page on Instagram, WhatsApp, or wherever you prefer. The link is just yours.",
+    "feature_2_title": "The client chooses independently",
+    "feature_2_desc": "No endless message threading. Your client accesses, sees available slots, and books instantly.",
+    "feature_3_title": "Instant Confirmation",
+    "feature_3_desc": "The slot is blocked automatically. The appointment goes straight into your calendar, confirming the reservation.",
+    "feature_4_badge": "Professional Dashboard",
+    "feature_4_title": "Everything synced under your control",
+    "feature_4_desc": "You track your entire team, client history, and real-time revenue with clean reports in the panel",
+
+    "testimonials_title": "See what our clients say.",
+    "testimonials_subtitle": "Professionals who revolutionized how they manage their businesses.",
+
+    "pricing_title": "Plans and pricing",
+    "pricing_subtitle": "Start for free. Scale when you grow.",
+    "pricing_free_title": "Free",
+    "pricing_free_price": "$ 0",
+    "pricing_free_desc": "For those just starting",
+    "pricing_pro_title": "Pro",
+    "pricing_pro_price": "$ 12",
+    "pricing_pro_desc": "For those who really want to grow",
+    "pricing_month": "/mo",
+    "pricing_popular": "Most popular",
+
+    "pricing_btn_free": "Create free account",
+    "pricing_btn_pro": "Subscribe to Pro",
+    "pricing_limit": "Limit of 30 bookings/mo",
+
+    "feature_item_page": "Booking page",
+    "feature_item_limit_free": "Up to 30 bookings/mo",
+    "feature_item_limit_pro": "Unlimited bookings",
+    "feature_item_prof_free": "1 professional",
+    "feature_item_prof_pro": "Up to 10 professionals",
+    "feature_item_catalog": "Visual catalog (Photos)",
+    "feature_item_catalog_desc": "Add value by showcasing your services",
+    "feature_item_reminders": "Automatic reminders",
+    "feature_item_dashboard": "Results dashboard",
+
+    "footer_copy": "© {year} MeAgenda Inc. All rights reserved."
+  }
+}

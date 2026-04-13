@@ -1,7 +1,11 @@
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
+import { useTranslations } from "next-intl"
 import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar, X as XIcon } from "lucide-react"
 
 export default function LandingPage() {
+  const t = useTranslations("LandingPage")
+  const currentYear = new Date().getFullYear()
+
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-sans selection:bg-[var(--coral-pale)] selection:text-[var(--coral-dark)]">
       
@@ -16,17 +20,17 @@ export default function LandingPage() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--ink-60)]">
-            <Link href="#features" className="hover:text-[var(--coral)] transition-colors">Como Funciona</Link>
-            <Link href="#pricing" className="hover:text-[var(--coral)] transition-colors">Planos</Link>
-            <Link href="#testimonials" className="hover:text-[var(--coral)] transition-colors">Avaliações</Link>
+            <Link href="#features" className="hover:text-[var(--coral)] transition-colors">{t('nav_howitworks')}</Link>
+            <Link href="#pricing" className="hover:text-[var(--coral)] transition-colors">{t('nav_pricing')}</Link>
+            <Link href="#testimonials" className="hover:text-[var(--coral)] transition-colors">{t('nav_testimonials')}</Link>
           </nav>
 
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium text-[var(--ink-60)] hover:text-[var(--coral)] transition-colors">
-              Entrar
+              {t('nav_login')}
             </Link>
             <Link href="/register" className="px-5 py-2.5 bg-[var(--coral)] text-white text-sm font-medium rounded-full hover:bg-[var(--coral-dark)] transition-colors shadow-sm">
-              Criar Conta
+              {t('nav_register')}
             </Link>
           </div>
         </div>
@@ -40,17 +44,17 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--coral)]/20 bg-[var(--coral-pale)] text-xs font-semibold text-[var(--coral)] mb-8 backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-[var(--coral)] animate-pulse" />
-            Vagas Ilimitadas Liberadas
+            {t('hero_badge')}
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
-            <span className="text-[var(--ink)]">Sua agenda lotada e organizada</span>
+            <span className="text-[var(--ink)]">{t('hero_title_1')}</span>
             <br />
-            <span className="text-[#2F9E73]">no piloto automático.</span>
+            <span className="text-[#2F9E73]">{t('hero_title_2')}</span>
           </h1>
           
           <p className="text-lg md:text-xl text-[var(--ink-60)] max-w-2xl mx-auto mb-12 leading-relaxed">
-            Simplifique a marcação de horários. Deixe seu cliente escolher, reservar e confirmar sem precisar trocar uma única mensagem.
+            {t('hero_subtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 max-w-xl mx-auto">
@@ -58,15 +62,15 @@ export default function LandingPage() {
               <span className="text-[var(--ink-30)] font-medium pl-4 hidden sm:inline">meagenda.com/</span>
               <input 
                 type="text" 
-                placeholder="nome-do-seu-salao" 
+                placeholder={t('hero_input_placeholder')} 
                 className="flex-1 bg-transparent border-none outline-none px-2 text-[var(--ink)] font-medium placeholder:text-[var(--ink-30)] w-full" 
               />
               <Link href="/register" className="px-6 py-3 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all whitespace-nowrap hidden sm:flex items-center gap-2">
-                Começar <ArrowRight className="w-4 h-4" />
+                {t('hero_button')} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <Link href="/register" className="w-full sm:hidden px-6 py-4 bg-[var(--coral)] text-white font-medium rounded-full hover:bg-[var(--coral-dark)] transition-all flex items-center justify-center gap-2">
-              Começar Agora <ArrowRight className="w-5 h-5" />
+              {t('hero_button_mobile')} <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
 
@@ -80,7 +84,7 @@ export default function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-[var(--ink-60)]">
-              Confiado por <strong className="text-[var(--ink)] font-medium">2.000+</strong> negócios no Brasil
+              {t('hero_social_proof', { count: '2.000' })}
             </p>
           </div>
         </div>
@@ -90,8 +94,8 @@ export default function LandingPage() {
       <section id="features" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">Como a plataforma funciona</h2>
-            <p className="text-[var(--ink-60)]">Um fluxo automático e inteligente que trabalha para você 24 horas por dia.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">{t('features_title')}</h2>
+            <p className="text-[var(--ink-60)]">{t('features_subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -114,8 +118,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="mt-auto relative z-10">
-                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">Compartilhe seu link</h3>
-                <p className="text-[var(--ink-60)] text-sm leading-relaxed">Divulgue sua página exclusiva no Instagram, WhatsApp ou onde preferir. O link é só seu.</p>
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">{t('feature_1_title')}</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">{t('feature_1_desc')}</p>
               </div>
             </div>
 
@@ -141,8 +145,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="mt-auto relative z-10">
-                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">O cliente escolhe sozinho</h3>
-                <p className="text-[var(--ink-60)] text-sm leading-relaxed">Sem trocas infinitas de mensagens. Seu cliente acessa, vê os horários livres e reserva na hora.</p>
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">{t('feature_2_title')}</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">{t('feature_2_desc')}</p>
               </div>
             </div>
 
@@ -172,8 +176,8 @@ export default function LandingPage() {
               </div>
 
               <div className="mt-auto relative z-10">
-                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">Confirmação Imediata</h3>
-                <p className="text-[var(--ink-60)] text-sm leading-relaxed">A vaga é bloqueada automaticamente. O agendamento entra direto para a sua agenda confirmando a reserva.</p>
+                <h3 className="text-xl font-bold mb-2 text-[var(--ink)]">{t('feature_3_title')}</h3>
+                <p className="text-[var(--ink-60)] text-sm leading-relaxed">{t('feature_3_desc')}</p>
               </div>
             </div>
           </div>
@@ -188,10 +192,10 @@ export default function LandingPage() {
             
             <div className="col-span-1 md:col-span-2 flex flex-col justify-center relative z-10 mb-8 md:mb-0">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold text-white mb-6 w-max border border-white/30 backdrop-blur-md">
-                <Activity className="w-3 h-3" /> Dashboard do Profissional
+                <Activity className="w-3 h-3" /> {t('feature_4_badge')}
               </div>
-              <h3 className="text-xl md:text-3xl font-bold mb-4 text-white">Tudo sincronizado no seu controle</h3>
-              <p className="text-white/80 text-sm leading-relaxed max-w-sm">Você acompanha toda a sua equipe, histórico de clientes e o dinheiro entrando na hora, com relatórios limpos no painel <strong>Admin</strong>.</p>
+              <h3 className="text-xl md:text-3xl font-bold mb-4 text-white">{t('feature_4_title')}</h3>
+              <p className="text-white/80 text-sm leading-relaxed max-w-sm">{t('feature_4_desc')} <strong>Admin</strong>.</p>
             </div>
 
             <div className="col-span-1 md:col-span-2 relative z-10">
@@ -230,8 +234,8 @@ export default function LandingPage() {
       <section id="testimonials" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">Veja o que nossos clientes dizem.</h2>
-            <p className="text-[var(--ink-60)]">Profissionais que revolucionaram a forma de gerenciar seus negócios.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--ink)]">{t('testimonials_title')}</h2>
+            <p className="text-[var(--ink-60)]">{t('testimonials_subtitle')}</p>
           </div>
 
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
@@ -281,8 +285,8 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--ink)]">Planos e preços</h2>
-            <p className="text-[var(--ink-60)] text-lg">Comece grátis. Escale quando crescer.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--ink)]">{t('pricing_title')}</h2>
+            <p className="text-[var(--ink-60)] text-lg">{t('pricing_subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -290,94 +294,94 @@ export default function LandingPage() {
             {/* Grátis Plan */}
             <div className="bg-[#FAF9F6] rounded-3xl p-8 border border-[var(--ink-10)] shadow-sm">
               <div className="mb-6">
-                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">Grátis</h3>
+                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">{t('pricing_free_title')}</h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">R$ 0</span>
-                  <span className="text-[var(--ink-60)] font-medium">/mês</span>
+                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">{t('pricing_free_price')}</span>
+                  <span className="text-[var(--ink-60)] font-medium">{t('pricing_month')}</span>
                 </div>
-                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">Para quem está começando</p>
+                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">{t('pricing_free_desc')}</p>
               </div>
               
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Página de agendamento
+                  {t('feature_item_page')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Até 30 agendamentos/mês
+                  {t('feature_item_limit_free')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  1 profissional
+                  {t('feature_item_prof_free')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-60)]">
                   <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
-                  Catálogo visual (Com fotos)
+                  {t('feature_item_catalog')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-60)]">
                   <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
-                  Lembretes automáticos
+                  {t('feature_item_reminders')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Dashboard de resultados
+                  {t('feature_item_dashboard')}
                 </li>
               </ul>
               
               <div className="text-center">
                 <Link href="/register" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[var(--ink-40)] hover:bg-[var(--ink-10)] transition-all">
-                  Criar conta grátis
+                  {t('pricing_btn_free')}
                 </Link>
-                <p className="text-[13px] text-[#b33a3a] mt-4 font-medium">Limite de 30 agendamentos/mês</p>
+                <p className="text-[13px] text-[#b33a3a] mt-4 font-medium">{t('pricing_limit')}</p>
               </div>
             </div>
 
             {/* Pro Plan */}
             <div className="bg-white rounded-3xl p-8 border-2 border-[#2F9E73] shadow-md relative">
               <div className="absolute top-0 right-8 -translate-y-1/2">
-                <span className="bg-[#E5F5EF] text-[#2F9E73] text-sm font-semibold px-4 py-1.5 rounded-full">Mais popular</span>
+                <span className="bg-[#E5F5EF] text-[#2F9E73] text-sm font-semibold px-4 py-1.5 rounded-full">{t('pricing_popular')}</span>
               </div>
               
               <div className="mb-6">
-                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">Pro</h3>
+                <h3 className="text-xl font-medium text-[var(--ink)] mb-2">{t('pricing_pro_title')}</h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">R$ 49</span>
-                  <span className="text-[var(--ink-60)] font-medium">/mês</span>
+                  <span className="text-5xl font-bold tracking-tight text-[var(--ink)]">{t('pricing_pro_price')}</span>
+                  <span className="text-[var(--ink-60)] font-medium">{t('pricing_month')}</span>
                 </div>
-                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">Para quem quer crescer de verdade</p>
+                <p className="text-[var(--ink-60)] text-sm mt-3 pb-6 border-b border-[var(--ink-10)]">{t('pricing_pro_desc')}</p>
               </div>
               
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Página de agendamento
+                  {t('feature_item_page')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Agendamentos ilimitados
+                  {t('feature_item_limit_pro')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Até 10 profissionais
+                  {t('feature_item_prof_pro')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Lembretes automáticos
+                  {t('feature_item_reminders')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  Dashboard de resultados
+                  {t('feature_item_dashboard')}
                 </li>
                 <li className="flex gap-3 items-start text-[var(--ink)]">
                   <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
-                  <div><p className="font-semibold text-sm">Catálogo com Fotos em HD</p><p className="text-xs text-[var(--ink-60)] leading-tight">Agregue valor mostrando seus serviços</p></div>
+                  <div><p className="font-semibold text-sm">{t('feature_item_catalog')}</p><p className="text-xs text-[var(--ink-60)] leading-tight">{t('feature_item_catalog_desc')}</p></div>
                 </li>
               </ul>
               
               <div className="text-center mt-auto pt-4">
                 <Link href="/register?plan=pro" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[#2F9E73] hover:text-[#2F9E73] transition-all">
-                  Assinar Plano Pro
+                  {t('pricing_btn_pro')}
                 </Link>
               </div>
             </div>
@@ -388,7 +392,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)] text-center text-sm font-medium text-[var(--ink-30)]">
-        <p>© 2026 MeAgenda Inc. Todos os direitos reservados.</p>
+        <p>{t('footer_copy', { year: currentYear })}</p>
       </footer>
 
     </div>

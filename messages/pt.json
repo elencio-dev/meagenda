@@ -1,0 +1,60 @@
+{
+  "LandingPage": {
+    "nav_howitworks": "Como Funciona",
+    "nav_pricing": "Planos",
+    "nav_testimonials": "Avaliações",
+    "nav_login": "Entrar",
+    "nav_register": "Criar Conta",
+
+    "hero_badge": "Vagas Ilimitadas Liberadas",
+    "hero_title_1": "Sua agenda lotada e organizada",
+    "hero_title_2": "no piloto automático.",
+    "hero_subtitle": "Simplifique a marcação de horários. Deixe seu cliente escolher, reservar e confirmar sem precisar trocar uma única mensagem.",
+    "hero_input_placeholder": "nome-do-seu-salao",
+    "hero_button": "Começar",
+    "hero_button_mobile": "Começar Agora",
+    "hero_social_proof": "Confiado por {count} negócios no Brasil",
+
+    "features_title": "Como a plataforma funciona",
+    "features_subtitle": "Um fluxo automático e inteligente que trabalha para você 24 horas por dia.",
+    "feature_1_title": "Compartilhe seu link",
+    "feature_1_desc": "Divulgue sua página exclusiva no Instagram, WhatsApp ou onde preferir. O link é só seu.",
+    "feature_2_title": "O cliente escolhe sozinho",
+    "feature_2_desc": "Sem trocas infinitas de mensagens. Seu cliente acessa, vê os horários livres e reserva na hora.",
+    "feature_3_title": "Confirmação Imediata",
+    "feature_3_desc": "A vaga é bloqueada automaticamente. O agendamento entra direto para a sua agenda confirmando a reserva.",
+    "feature_4_badge": "Dashboard do Profissional",
+    "feature_4_title": "Tudo sincronizado no seu controle",
+    "feature_4_desc": "Você acompanha toda a sua equipe, histórico de clientes e o dinheiro entrando na hora, com relatórios limpos no painel",
+
+    "testimonials_title": "Veja o que nossos clientes dizem.",
+    "testimonials_subtitle": "Profissionais que revolucionaram a forma de gerenciar seus negócios.",
+
+    "pricing_title": "Planos e preços",
+    "pricing_subtitle": "Comece grátis. Escale quando crescer.",
+    "pricing_free_title": "Grátis",
+    "pricing_free_price": "R$ 0",
+    "pricing_free_desc": "Para quem está começando",
+    "pricing_pro_title": "Pro",
+    "pricing_pro_price": "R$ 49",
+    "pricing_pro_desc": "Para quem quer crescer de verdade",
+    "pricing_month": "/mês",
+    "pricing_popular": "Mais popular",
+
+    "pricing_btn_free": "Criar conta grátis",
+    "pricing_btn_pro": "Assinar Plano Pro",
+    "pricing_limit": "Limite de 30 agendamentos/mês",
+
+    "feature_item_page": "Página de agendamento",
+    "feature_item_limit_free": "Até 30 agendamentos/mês",
+    "feature_item_limit_pro": "Agendamentos ilimitados",
+    "feature_item_prof_free": "1 profissional",
+    "feature_item_prof_pro": "Até 10 profissionais",
+    "feature_item_catalog": "Catálogo visual (Com fotos)",
+    "feature_item_catalog_desc": "Agregue valor mostrando seus serviços",
+    "feature_item_reminders": "Lembretes automáticos",
+    "feature_item_dashboard": "Dashboard de resultados",
+
+    "footer_copy": "© {year} MeAgenda Inc. Todos os direitos reservados."
+  }
+}
