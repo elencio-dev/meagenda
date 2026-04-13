@@ -111,3 +111,48 @@ export async function createAgendamento(payload: CreateBookingPayload) {
 
   return agendamento
 }
+
+export async function findAppointments(userId: string, filters: { date?: string | null, status?: string | null }) {
+  const where: Record<string, unknown> = { userId }
+  if (filters.date) {
+    const date = new Date(filters.date)
+    const nextDay = new Date(date); nextDay.setDate(nextDay.getDate() + 1)
+    where.date = { gte: date, lt: nextDay }
+  }
+  if (filters.status) where.status = filters.status
+
+  const agendamentos = await prisma.agendamento.findMany({
+    where,
+    include: {
+      cliente: { select: { name: true, phone: true, email: true } },
+      servico: { select: { name: true, duration: true } },
+      profissional: { select: { name: true } },
+    },
+    orderBy: [{ date: "asc" }, { time: "asc" }],
+  })
+
+  return agendamentos.map(a => ({
+    id: a.id,
+    client: a.cliente.name,
+    clientPhone: a.cliente.phone,
+    clientEmail: a.cliente.email,
+    service: a.servico.name,
+    professional: a.profissional?.name ?? "Sem profissional",
+    date: a.date,
+    time: a.time,
+    duration: `${a.servico.duration}min`,
+    status: a.status,
+    price: a.price,
+    notes: a.notes,
+  }))
+}
+
+export async function updateAppointment(id: number, userId: string, data: { status?: string, time?: string }) {
+  return await prisma.agendamento.update({
+    where: { id, userId },
+    data: { 
+      ...(data.status && { status: data.status as any }), 
+      ...(data.time && { time: data.time }) 
+    },
+  })
+}
