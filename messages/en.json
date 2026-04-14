@@ -345,6 +345,16 @@
     "confirmation_time": "Time",
     "confirmation_price": "Price",
     "confirmation_add_calendar": "Add to Google Calendar",
-    "confirmation_professional_detail": "Professional: {name}"
+    "confirmation_professional_detail": "Professional: {name}",
+    "biz_location": "Location",
+    "biz_contact": "Contact",
+    "biz_online_booking": "Online booking",
+    "biz_online_booking_desc": "Choose the service, professional, date and time. Fast and easy.",
+    "no_services": "No services available",
+    "no_professionals": "No professionals available",
+    "service_popular_badge": "Popular",
+    "slot_available": "Available",
+    "slot_selected": "Selected",
+    "slot_taken": "Taken"
   }
 }

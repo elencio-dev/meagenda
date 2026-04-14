@@ -345,6 +345,16 @@
     "confirmation_time": "Horário",
     "confirmation_price": "Valor",
     "confirmation_add_calendar": "Adicionar ao Google Calendar",
-    "confirmation_professional_detail": "Profissional: {name}"
+    "confirmation_professional_detail": "Profissional: {name}",
+    "biz_location": "Localização",
+    "biz_contact": "Contato",
+    "biz_online_booking": "Agendamento online",
+    "biz_online_booking_desc": "Escolha o serviço, profissional, data e horário. Rápido e fácil.",
+    "no_services": "Nenhum serviço disponível",
+    "no_professionals": "Nenhum profissional disponível",
+    "service_popular_badge": "Popular",
+    "slot_available": "Disponível",
+    "slot_selected": "Selecionado",
+    "slot_taken": "Ocupado"
   }
 }

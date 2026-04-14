@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useTranslations, useLocale } from "next-intl"
 import { cn } from "@/lib/utils"
 
 interface CalendarProps {
@@ -9,71 +10,61 @@ interface CalendarProps {
   onSelectDate: (date: Date) => void
 }
 
-const WEEKDAYS = ["D", "S", "T", "Q", "Q", "S", "S"]
-const MONTHS = [
-  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-]
-
 // Mock data for days with available slots
 const DAYS_WITH_SLOTS = [2, 3, 4, 8, 9, 10, 11, 15, 17, 18, 23, 24, 25]
 
 export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
+  const t = useTranslations("Booking")
+  const locale = useLocale()
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  
+
   const today = new Date()
   const year = currentMonth.getFullYear()
   const month = currentMonth.getMonth()
-  
+
   const firstDayOfMonth = new Date(year, month, 1)
   const lastDayOfMonth = new Date(year, month + 1, 0)
   const startingDayOfWeek = firstDayOfMonth.getDay()
   const daysInMonth = lastDayOfMonth.getDate()
-  
-  const prevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1))
-  }
-  
-  const nextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1))
-  }
-  
-  const isToday = (day: number) => {
-    return day === today.getDate() && 
-           month === today.getMonth() && 
-           year === today.getFullYear()
-  }
-  
+
+  // Generate weekday labels (S, M, T, W, T, F, S) from locale
+  const WEEKDAYS = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(2024, 0, i) // Jan 7 is Sunday
+    return new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(d)
+  })
+
+  // Month name + year header from locale
+  const monthLabel = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(currentMonth)
+
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1))
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1))
+
+  const isToday = (day: number) =>
+    day === today.getDate() && month === today.getMonth() && year === today.getFullYear()
+
   const isSelected = (day: number) => {
     if (!selectedDate) return false
-    return day === selectedDate.getDate() && 
-           month === selectedDate.getMonth() && 
-           year === selectedDate.getFullYear()
+    return day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
   }
-  
+
   const isPastDay = (day: number) => {
     const date = new Date(year, month, day)
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
     return date < todayStart
   }
-  
-  const isSunday = (dayIndex: number) => {
-    return dayIndex === 0
-  }
-  
+
+  const isSunday = (dayIndex: number) => dayIndex === 0
   const hasSlots = (day: number) => DAYS_WITH_SLOTS.includes(day)
-  
+
   const handleDateClick = (day: number) => {
     if (isPastDay(day)) return
     const dayOfWeek = new Date(year, month, day).getDay()
     if (isSunday(dayOfWeek)) return
-    
     onSelectDate(new Date(year, month, day))
   }
-  
+
   const days = []
-  
-  // Add empty cells for days before the first day of the month
+
   for (let i = 0; i < startingDayOfWeek; i++) {
     const prevMonthLastDay = new Date(year, month, 0).getDate()
     days.push(
@@ -82,12 +73,10 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
       </div>
     )
   }
-  
-  // Add days of the month
+
   for (let day = 1; day <= daysInMonth; day++) {
     const dayOfWeek = new Date(year, month, day).getDay()
     const disabled = isPastDay(day) || isSunday(dayOfWeek)
-    
     days.push(
       <button
         key={day}
@@ -97,8 +86,8 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
         disabled={disabled}
         className={cn(
           "aspect-square flex flex-col items-center justify-center text-sm rounded-md relative transition-all duration-150",
-          isSelected(day) 
-            ? "bg-coral text-white" 
+          isSelected(day)
+            ? "bg-coral text-white"
             : isToday(day)
             ? "font-bold text-coral"
             : disabled
@@ -114,27 +103,19 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
       </button>
     )
   }
-  
+
   return (
     <div className="bg-card rounded-xl border border-ink-10 overflow-hidden shadow-sm">
       <div className="flex items-center justify-between px-5 py-4 border-b border-ink-10">
-        <button
-          onClick={prevMonth}
-          className="w-8 h-8 rounded-md border border-ink-10 flex items-center justify-center text-ink-60 hover:border-coral hover:text-coral transition-colors"
-        >
+        <button onClick={prevMonth} className="w-8 h-8 rounded-md border border-ink-10 flex items-center justify-center text-ink-60 hover:border-coral hover:text-coral transition-colors">
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="font-semibold text-ink">
-          {MONTHS[month]} {year}
-        </span>
-        <button
-          onClick={nextMonth}
-          className="w-8 h-8 rounded-md border border-ink-10 flex items-center justify-center text-ink-60 hover:border-coral hover:text-coral transition-colors"
-        >
+        <span className="font-semibold text-ink capitalize">{monthLabel}</span>
+        <button onClick={nextMonth} className="w-8 h-8 rounded-md border border-ink-10 flex items-center justify-center text-ink-60 hover:border-coral hover:text-coral transition-colors">
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
-      
+
       <div className="p-4">
         <div className="grid grid-cols-7 gap-0.5 mb-2">
           {WEEKDAYS.map((day, index) => (
@@ -143,20 +124,17 @@ export function Calendar({ selectedDate, onSelectDate }: CalendarProps) {
             </div>
           ))}
         </div>
-        
-        <div className="grid grid-cols-7 gap-0.5">
-          {days}
-        </div>
+        <div className="grid grid-cols-7 gap-0.5">{days}</div>
       </div>
-      
+
       <div className="px-4 pb-4 flex items-center gap-4 text-xs text-ink-60">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-coral" />
-          <span>Disponível</span>
+          <span>{t("slot_available")}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-ink-30" />
-          <span>Indisponível</span>
+          <span>{t("slot_taken")}</span>
         </div>
       </div>
     </div>

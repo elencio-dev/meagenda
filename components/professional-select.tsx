@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
 
@@ -16,6 +17,8 @@ function getInitials(name: string) {
 }
 
 export function ProfessionalSelect({ profissionais, selectedId, onSelect }: ProfessionalSelectProps) {
+  const t = useTranslations("Booking")
+
   return (
     <div className="space-y-3">
       {profissionais.map((p) => (
@@ -36,12 +39,11 @@ export function ProfessionalSelect({ profissionais, selectedId, onSelect }: Prof
             <p className={cn("font-semibold text-[15px] transition-colors", selectedId === p.id ? "text-[var(--ink)]" : "text-[var(--ink)]")}>{p.name}</p>
             <p className="text-xs font-medium text-[var(--ink-60)] mt-0.5 truncate">{p.role}</p>
           </div>
-          
           <div className="flex items-center flex-shrink-0">
             <div className={cn(
               "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
-              selectedId === p.id 
-                ? "border-[var(--coral)] bg-[var(--coral)] shadow-sm scale-110" 
+              selectedId === p.id
+                ? "border-[var(--coral)] bg-[var(--coral)] shadow-sm scale-110"
                 : "border-[var(--ink-20)] bg-transparent"
             )}>
               {selectedId === p.id && <Check className="w-3.5 h-3.5 text-white animate-in zoom-in" />}
@@ -50,7 +52,7 @@ export function ProfessionalSelect({ profissionais, selectedId, onSelect }: Prof
         </button>
       ))}
       {profissionais.length === 0 && (
-        <p className="text-center text-ink-60 py-8">Nenhum profissional disponível</p>
+        <p className="text-center text-ink-60 py-8">{t("no_professionals")}</p>
       )}
     </div>
   )

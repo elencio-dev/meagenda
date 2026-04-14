@@ -31,6 +31,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations("Admin")
@@ -153,6 +154,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Button>
             <div className="flex-1 lg:flex-none" />
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5 text-[var(--ink-60)]" />
               </Button>
