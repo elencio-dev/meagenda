@@ -216,6 +216,8 @@
     "prof_empty_desc": "Add the professionals who work at your business.",
     "prof_empty_note": "Appointments can still be created without a professional.",
     "btn_add_first_professional": "Add first professional",
+    "prof_upgrade_cta": "Upgrade to PRO",
+    "prof_save_error": "Error saving professional",
     "services_title": "Services",
     "services_subtitle": "Manage your services and prices",
     "btn_new_service": "New Service",

@@ -216,6 +216,8 @@
     "prof_empty_desc": "Adicione os profissionais que trabalham na sua empresa.",
     "prof_empty_note": "Os agendamentos ainda podem ser criados sem profissional.",
     "btn_add_first_professional": "Adicionar primeiro profissional",
+    "prof_upgrade_cta": "Fazer upgrade para o PRO",
+    "prof_save_error": "Erro ao salvar profissional",
     "services_title": "Serviços",
     "services_subtitle": "Gerencie seus serviços e preços",
     "btn_new_service": "Novo Serviço",

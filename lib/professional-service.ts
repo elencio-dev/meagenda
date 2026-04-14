@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { canAddProfessional, PLAN_LIMITS } from "@/lib/billing"
 
 export interface CreateProfessionalPayload {
   userId: string;
@@ -24,9 +25,24 @@ export async function findProfessionals(userId: string) {
 }
 
 /**
- * Creates a new professional.
+ * Creates a new professional, enforcing plan limits:
+ * - FREE plan: max 1 professional
+ * - PRO plan:  max 10 professionals
  */
 export async function createProfessional(payload: CreateProfessionalPayload) {
+  const { allowed, limit, current, plan } = await canAddProfessional(payload.userId)
+
+  if (!allowed) {
+    const err: any = new Error(
+      plan === "FREE"
+        ? `Plano gratuito permite apenas ${limit} profissional. Faça upgrade para o PRO e adicione até ${PLAN_LIMITS.PRO.professionals}.`
+        : `Limite de ${limit} profissionais atingido no plano PRO.`
+    )
+    err.statusCode = 403
+    err.details = { plan, current, limit }
+    throw err
+  }
+
   return await prisma.profissional.create({
     data: {
       userId: payload.userId,
