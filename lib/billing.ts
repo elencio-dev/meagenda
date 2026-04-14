@@ -1,5 +1,12 @@
 import { prisma } from "@/lib/prisma"
 
+// ─── Plan limits ─────────────────────────────────────────────────────────────
+
+export const PLAN_LIMITS = {
+  FREE: { professionals: 1, appointments: 30 },
+  PRO:  { professionals: 10, appointments: Infinity },
+} as const
+
 // ─── Private helpers ─────────────────────────────────────────────────────────
 
 /**
@@ -60,6 +67,25 @@ export async function canCreateAppointment(userId: string) {
 
   const count = await getMonthlyCount(userId)
   return count < 30
+}
+
+/**
+ * Verifica se o usuário pode adicionar mais profissionais com base no plano.
+ * FREE → máximo 1 profissional ativo
+ * PRO  → máximo 10 profissionais
+ */
+export async function canAddProfessional(userId: string): Promise<{ allowed: boolean; limit: number; current: number; plan: string }> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { planId: true },
+  })
+
+  const plan = (user?.planId ?? "FREE") as "FREE" | "PRO"
+  const limit = PLAN_LIMITS[plan].professionals
+
+  const current = await prisma.profissional.count({ where: { userId } })
+
+  return { allowed: current < limit, limit, current, plan }
 }
 
 /**

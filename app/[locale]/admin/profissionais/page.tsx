@@ -17,6 +17,7 @@ export default function ProfissionaisPage() {
   const [editItem, setEditItem] = useState<Profissional | null>(null)
   const [form, setForm] = useState({ name: "", role: "" })
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState("")
 
   const load = () => {
     fetch("/api/profissionais")
@@ -28,19 +29,25 @@ export default function ProfissionaisPage() {
 
   useEffect(() => { load() }, [])
 
-  const openCreate = () => { setEditItem(null); setForm({ name: "", role: "" }); setOpen(true) }
-  const openEdit = (p: Profissional) => { setEditItem(p); setForm({ name: p.name, role: p.role }); setOpen(true) }
+  const openCreate = () => { setEditItem(null); setForm({ name: "", role: "" }); setSaveError(""); setOpen(true) }
+  const openEdit = (p: Profissional) => { setEditItem(p); setForm({ name: p.name, role: p.role }); setSaveError(""); setOpen(true) }
 
   const handleSave = async () => {
     if (!form.name.trim() || !form.role.trim()) return
-    setSaving(true)
+    setSaving(true); setSaveError("")
     try {
       if (editItem) {
         await fetch("/api/profissionais", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editItem.id, name: form.name, role: form.role }) })
+        setOpen(false); load()
       } else {
-        await fetch("/api/profissionais", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+        const res = await fetch("/api/profissionais", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
+        if (!res.ok) {
+          const data = await res.json()
+          setSaveError(data.error ?? t("prof_save_error"))
+          return
+        }
+        setOpen(false); load()
       }
-      setOpen(false); load()
     } finally { setSaving(false) }
   }
 
@@ -75,6 +82,17 @@ export default function ProfissionaisPage() {
               <DialogTitle className="font-sans text-xl">{editItem ? t("prof_dialog_edit") : t("prof_dialog_create")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
+              {saveError && (
+                <div className="bg-[var(--coral-pale)] border border-[var(--coral)]/30 rounded-xl p-4">
+                  <p className="text-sm text-[var(--coral-dark)] font-medium mb-2">{saveError}</p>
+                  <a
+                    href="/admin/configuracoes"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[var(--coral)] hover:bg-[var(--coral-dark)] px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    ⭐ {t("prof_upgrade_cta")}
+                  </a>
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--ink)]">{t("prof_name")}</label>
                 <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
