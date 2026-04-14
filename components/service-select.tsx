@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { Check, Sparkles, Clock } from "lucide-react"
 
@@ -12,15 +13,12 @@ interface ServiceSelectProps {
 }
 
 export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectProps) {
-  // Agrupar por categoria
+  const t = useTranslations("Booking")
+
   const categories = Array.from(new Set(servicos.map(s => s.category)))
 
   const formatDuration = (min: number) => {
-    if (min >= 60) {
-      const h = Math.floor(min / 60)
-      const m = min % 60
-      return m > 0 ? `${h}h ${m}min` : `${h}h`
-    }
+    if (min >= 60) { const h = Math.floor(min / 60); const m = min % 60; return m > 0 ? `${h}h ${m}min` : `${h}h` }
     return `${min}min`
   }
 
@@ -43,14 +41,12 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
                 )}
               >
                 <div className="flex flex-1 items-center gap-4 pr-4">
-                  {/* Thumbnail HD */}
                   {servico.imageUrl && (
                     <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-[var(--ink-10)] shadow-sm">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={servico.imageUrl} alt={servico.name} className="w-full h-full object-cover" />
                     </div>
                   )}
-                  
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <p className={cn("font-semibold text-[15px] transition-colors", selectedId === servico.id ? "text-[var(--ink)]" : "text-[var(--ink)]")}>
@@ -58,7 +54,7 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
                       </p>
                       {servico.popular && (
                         <span className="inline-flex flex-shrink-0 items-center gap-1 px-2.5 py-0.5 bg-[var(--coral)] text-white rounded-full text-[10px] font-bold tracking-wide uppercase">
-                          <Sparkles className="w-3 h-3" /> Popular
+                          <Sparkles className="w-3 h-3" /> {t("service_popular_badge")}
                         </span>
                       )}
                     </div>
@@ -75,11 +71,10 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
                       R$ {servico.price}
                     </p>
                   </div>
-                  
                   <div className={cn(
                     "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
-                    selectedId === servico.id 
-                      ? "border-[var(--coral)] bg-[var(--coral)] shadow-sm scale-110" 
+                    selectedId === servico.id
+                      ? "border-[var(--coral)] bg-[var(--coral)] shadow-sm scale-110"
                       : "border-[var(--ink-20)] bg-transparent"
                   )}>
                     {selectedId === servico.id && <Check className="w-3.5 h-3.5 text-white animate-in zoom-in" />}
@@ -91,7 +86,7 @@ export function ServiceSelect({ servicos, selectedId, onSelect }: ServiceSelectP
         </div>
       ))}
       {servicos.length === 0 && (
-        <p className="text-center text-ink-60 py-8">Nenhum serviço disponível</p>
+        <p className="text-center text-ink-60 py-8">{t("no_services")}</p>
       )}
     </div>
   )
