@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { BookingSteps } from "@/components/booking-steps"
 import { Calendar } from "@/components/calendar"
 import { TimeSlots } from "@/components/time-slots"
@@ -12,6 +13,9 @@ import { BusinessInfo } from "@/components/business-info"
 import type { BookingData, BookingResult } from "@/lib/types"
 
 export function BookingClientFlow({ slug, initialData }: { slug: string; initialData: BookingData }) {
+  const t = useTranslations("Booking")
+  const locale = useLocale()
+
   const [bookingData] = useState<BookingData>(initialData)
 
   const [currentStep, setCurrentStep] = useState(1)
@@ -103,11 +107,11 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
         handleNextStep()
       } else {
         const err = await agRes.json()
-        alert(err.error + (err.details ? "\n\nDetalhes do Erro: " + err.details : "") || "Este horário já não está mais disponível.")
+        alert(err.error + (err.details ? `\n\n${t("error_details")}: ` + err.details : "") || t("error_time_unavailable"))
       }
     } catch (e) {
       console.error(e)
-      alert("Ocorreu um erro ao processar seu agendamento.")
+      alert(t("error_processing"))
     } finally {
       setIsSubmitting(false)
     }
@@ -118,7 +122,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
       case 1:
         return (
           <div className="space-y-6">
-            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">Escolha o serviço</h2><p className="text-sm text-[var(--ink-60)]">Selecione o serviço desejado</p></div>
+            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">{t("choose_service")}</h2><p className="text-sm text-[var(--ink-60)]">{t("choose_service_subtitle")}</p></div>
             <ServiceSelect servicos={bookingData.servicos} selectedId={selectedServiceId} onSelect={(id) => { setSelectedServiceId(id); handleNextStep() }} />
           </div>
         )
@@ -126,21 +130,21 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
         if (!hasProfissionais) return null
         return (
           <div className="space-y-6">
-            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">Escolha o profissional</h2><p className="text-sm text-[var(--ink-60)]">Selecione quem vai te atender</p></div>
+            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">{t("choose_professional")}</h2><p className="text-sm text-[var(--ink-60)]">{t("choose_professional_subtitle")}</p></div>
             <ProfessionalSelect profissionais={bookingData.profissionais} selectedId={selectedProfessionalId} onSelect={(id) => { setSelectedProfessionalId(id); handleNextStep() }} />
           </div>
         )
       case 3:
         return (
           <div className="space-y-6">
-            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">Escolha a data</h2></div>
+            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">{t("choose_date")}</h2></div>
             <Calendar selectedDate={selectedDate} onSelectDate={(date) => { setSelectedDate(date); handleNextStep() }} />
           </div>
         )
       case 4:
         return (
           <div className="space-y-6">
-            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">Escolha o horário</h2><p className="text-sm text-[var(--ink-60)]">{selectedDate?.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}</p></div>
+            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">{t("choose_time")}</h2><p className="text-sm text-[var(--ink-60)]">{selectedDate?.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })}</p></div>
             <TimeSlots selectedDate={selectedDate} profissionalId={selectedProfessionalId} selectedTime={selectedTime} onSelectTime={(time) => { setSelectedTime(time); handleNextStep() }} slug={slug} />
           </div>
         )
@@ -151,11 +155,11 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
               <div className="absolute inset-0 z-10 bg-[var(--paper)]/60 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-8 h-8 border-4 border-[var(--coral)] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm text-[var(--ink)] font-semibold">Confirmando...</span>
+                  <span className="text-sm text-[var(--ink)] font-semibold">{t("confirming")}</span>
                 </div>
               </div>
             )}
-            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">Seus dados</h2></div>
+            <div><h2 className="font-sans text-2xl text-[var(--ink)] mb-2">{t("your_details")}</h2></div>
             <BookingForm formData={formData} onFormChange={setFormData} onSubmit={handleSubmit} />
           </div>
         )
@@ -179,7 +183,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
           )}
           <div>
             <span className="font-sans text-xl text-[var(--ink)]">{bookingData.business.name}</span>
-            <span className="text-[var(--ink-30)] text-sm ml-2">· powered by MeAgenda</span>
+            <span className="text-[var(--ink-30)] text-sm ml-2">{t("powered_by")}</span>
           </div>
         </div>
       </header>
@@ -195,7 +199,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
               <div className="mt-8">
                 <button disabled={isSubmitting} onClick={handlePrevStep} className="inline-flex items-center gap-2 text-[var(--coral)] hover:bg-[var(--coral-pale)] disabled:opacity-50 px-4 py-2 rounded-lg transition-colors">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  Passo anterior
+                  {t("prev_step")}
                 </button>
               </div>
             )}
