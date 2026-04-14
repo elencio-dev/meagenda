@@ -10,6 +10,7 @@ import { ServiceSelect } from "@/components/service-select"
 import { BookingForm } from "@/components/booking-form"
 import { BookingConfirmation } from "@/components/booking-confirmation"
 import { BusinessInfo } from "@/components/business-info"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import type { BookingData, BookingResult } from "@/lib/types"
 
 export function BookingClientFlow({ slug, initialData }: { slug: string; initialData: BookingData }) {
@@ -184,6 +185,9 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
           <div>
             <span className="font-sans text-xl text-[var(--ink)]">{bookingData.business.name}</span>
             <span className="text-[var(--ink-30)] text-sm ml-2">{t("powered_by")}</span>
+          </div>
+          <div className="ml-auto">
+            <LanguageSwitcher />
           </div>
         </div>
       </header>

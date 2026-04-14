@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar, X as XIcon } from "lucide-react"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function LandingPage() {
   const t = useTranslations("LandingPage")
@@ -25,7 +26,8 @@ export default function LandingPage() {
             <Link href="#testimonials" className="hover:text-[var(--coral)] transition-colors">{t('nav_testimonials')}</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link href="/login" className="text-sm font-medium text-[var(--ink-60)] hover:text-[var(--coral)] transition-colors">
               {t('nav_login')}
             </Link>
