@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 interface BookingFormProps {
@@ -14,6 +15,8 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormProps) {
+  const t = useTranslations("Booking")
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSubmit()
@@ -23,13 +26,13 @@ export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormPro
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <label htmlFor="name" className="text-sm font-medium text-ink">
-          Nome completo
+          {t("form_name")}
         </label>
         <input
           id="name"
           type="text"
           required
-          placeholder="Maria da Silva"
+          placeholder={t("form_name_placeholder")}
           value={formData.name}
           onChange={(e) => onFormChange({ ...formData, name: e.target.value })}
           className={cn(
@@ -38,18 +41,18 @@ export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormPro
             "focus:border-coral focus:ring-3 focus:ring-coral/10"
           )}
         />
-        <p className="text-xs text-ink-60">Como você prefere ser chamado(a)</p>
+        <p className="text-xs text-ink-60">{t("form_name_hint")}</p>
       </div>
 
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium text-ink">
-          E-mail
+          {t("form_email")}
         </label>
         <input
           id="email"
           type="email"
           required
-          placeholder="maria@email.com"
+          placeholder={t("form_email_placeholder")}
           value={formData.email}
           onChange={(e) => onFormChange({ ...formData, email: e.target.value })}
           className={cn(
@@ -58,18 +61,18 @@ export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormPro
             "focus:border-coral focus:ring-3 focus:ring-coral/10"
           )}
         />
-        <p className="text-xs text-ink-60">Para receber o comprovante em PDF</p>
+        <p className="text-xs text-ink-60">{t("form_email_hint")}</p>
       </div>
 
       <div className="space-y-2">
         <label htmlFor="phone" className="text-sm font-medium text-ink">
-          Contato / WhatsApp
+          {t("form_phone")}
         </label>
         <input
           id="phone"
           type="tel"
           required
-          placeholder="(11) 91234-5678"
+          placeholder={t("form_phone_placeholder")}
           value={formData.phone}
           onChange={(e) => onFormChange({ ...formData, phone: e.target.value })}
           className={cn(
@@ -82,12 +85,12 @@ export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormPro
 
       <div className="space-y-2">
         <label htmlFor="notes" className="text-sm font-medium text-ink">
-          Observação <span className="text-ink-30">(opcional)</span>
+          {t("form_notes")} <span className="text-ink-30">{t("form_notes_optional")}</span>
         </label>
         <textarea
           id="notes"
           rows={3}
-          placeholder="Alguma preferência ou informação adicional..."
+          placeholder={t("form_notes_placeholder")}
           value={formData.notes}
           onChange={(e) => onFormChange({ ...formData, notes: e.target.value })}
           className={cn(
@@ -108,7 +111,7 @@ export function BookingForm({ formData, onFormChange, onSubmit }: BookingFormPro
           "hover:-translate-y-0.5 active:translate-y-0"
         )}
       >
-        Confirmar agendamento
+        {t("form_submit")}
       </button>
     </form>
   )

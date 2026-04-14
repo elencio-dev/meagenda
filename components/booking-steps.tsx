@@ -1,20 +1,23 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 
 interface BookingStepsProps {
   currentStep: number
 }
 
-const steps = [
-  { number: 1, label: "Serviço" },
-  { number: 2, label: "Profissional" },
-  { number: 3, label: "Data" },
-  { number: 4, label: "Horário" },
-  { number: 5, label: "Dados" },
-]
-
 export function BookingSteps({ currentStep }: BookingStepsProps) {
+  const t = useTranslations("Booking")
+
+  const steps = [
+    { number: 1, label: t("step_service") },
+    { number: 2, label: t("step_professional") },
+    { number: 3, label: t("step_date") },
+    { number: 4, label: t("step_time") },
+    { number: 5, label: t("step_details") },
+  ]
+
   if (currentStep === 6) return null
 
   return (

@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -64,14 +65,16 @@ type DashboardData = {
 }
 
 export default function AdminDashboard() {
+  const t = useTranslations("Admin")
   return (
-    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-[400px] gap-4"><Loader2 className="h-10 w-10 animate-spin text-[var(--coral)]" /><p className="text-[var(--ink-60)]">Carregando dashboard...</p></div>}>
+    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-[400px] gap-4"><Loader2 className="h-10 w-10 animate-spin text-[var(--coral)]" /><p className="text-[var(--ink-60)]">{t("dashboard_loading")}</p></div>}>
       <AdminDashboardContent />
     </Suspense>
   )
 }
 
 function AdminDashboardContent() {
+  const t = useTranslations("Admin")
   const searchParams = useSearchParams()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -102,7 +105,7 @@ function AdminDashboardContent() {
       window.location.href = initPoint
     } catch(err) {
       console.error(err)
-      alert("Erro ao realizar upgrade.")
+      alert(t("billing_upgrade_error"))
       setLoading(false)
     }
   }
@@ -118,44 +121,44 @@ function AdminDashboardContent() {
 
   const getStatusBadge = (status: string) => {
     if (status === "confirmed") {
-      return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Confirmado</Badge>
+      return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">{t("status_confirmed")}</Badge>
     }
     if (status === "completed") {
-      return <Badge className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0">Concluído</Badge>
+      return <Badge className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0">{t("status_completed")}</Badge>
     }
-    return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">Pendente</Badge>
+    return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">{t("status_pending")}</Badge>
   }
 
   const stats = data ? [
     {
-      title: "Próximos Agendamentos",
+      title: t("stat_appointments"),
       value: String(data.stats.todayCount),
       change: `+${data.stats.todayCount}`,
-      changeLabel: "hoje",
+      changeLabel: t("stat_appointments_label"),
       icon: Calendar,
       color: "coral"
     },
     {
-      title: "Clientes Ativos",
+      title: t("stat_clients"),
       value: String(data.stats.totalClients),
       change: `+${data.stats.newClientsThisMonth}`,
-      changeLabel: "este mês",
+      changeLabel: t("stat_clients_label"),
       icon: Users,
       color: "success"
     },
     {
-      title: "Taxa de Ocupação",
+      title: t("stat_occupancy"),
       value: data.stats.todayCount > 0 ? `${Math.min(Math.round((data.stats.todayCount / 10) * 100), 100)}%` : "0%",
       change: "—",
-      changeLabel: "capacidade",
+      changeLabel: t("stat_occupancy_label"),
       icon: TrendingUp,
       color: "warning"
     },
     {
-      title: "Profissionais",
+      title: t("stat_professionals"),
       value: String((data.professionals ?? []).filter(p => p.available).length),
-      change: "disponíveis",
-      changeLabel: "agora",
+      change: t("professionals_available"),
+      changeLabel: t("stat_professionals_label"),
       icon: Clock,
       color: "ink"
     }
@@ -174,7 +177,7 @@ function AdminDashboardContent() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <Loader2 className="h-10 w-10 animate-spin text-[var(--coral)]" />
-        <p className="text-[var(--ink-60)]">Carregando dashboard...</p>
+        <p className="text-[var(--ink-60)]">{t("dashboard_loading")}</p>
       </div>
     )
   }
@@ -183,16 +186,16 @@ function AdminDashboardContent() {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h1 className="font-sans text-3xl text-[var(--ink)]">Dashboard</h1>
-        <p className="text-[var(--ink-60)] mt-1">Visão geral do seu negócio</p>
+        <h1 className="font-sans text-3xl text-[var(--ink)]">{t("dashboard_title")}</h1>
+        <p className="text-[var(--ink-60)] mt-1">{t("dashboard_subtitle")}</p>
       </div>
 
       {isUpgradeSuccess && (
         <div className="bg-emerald-50 border border-emerald-400 text-emerald-800 px-4 py-3 rounded relative mb-4">
           <strong className="font-bold flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5" /> Parabéns!
+            <CheckCircle2 className="h-5 w-5" /> {t("upgrade_success_title")}
           </strong>
-          <span className="block sm:inline mt-1">Sua conta MeAgenda PRO foi ativada com sucesso. Obrigado por assinar!</span>
+          <span className="block sm:inline mt-1">{t("upgrade_success_body")}</span>
         </div>
       )}
 
@@ -203,19 +206,19 @@ function AdminDashboardContent() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-[var(--ink)]">
-                  Plano Atual: {data.billing.planName}
+                  {t("billing_current_plan")}: {data.billing.planName}
                 </h3>
-                {data.billing.plan === "PRO" && <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0">Premium Ativo</Badge>}
+                {data.billing.plan === "PRO" && <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0">{t("billing_premium_active")}</Badge>}
               </div>
               <p className="text-sm text-[var(--ink-60)]">
                 {data.billing.plan === "FREE" 
-                  ? `Você já utilizou ${data.billing.currentAppointments} de ${data.billing.maxAppointments} agendamentos gratuitos neste mês.`
-                  : "Você tem agendamentos ilimitados e lembretes automáticos ativados!"}
+                  ? t("billing_free_usage", { current: data.billing.currentAppointments, max: data.billing.maxAppointments })
+                  : t("billing_pro_usage")}
               </p>
             </div>
             {data.billing.plan === "FREE" && (
               <Button onClick={handleUpgrade} className="w-full sm:w-auto bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white font-bold shadow-md transition-all">
-                Fazer Upgrade para o Pro
+                {t("billing_upgrade_btn")}
               </Button>
             )}
           </CardContent>
@@ -249,9 +252,9 @@ function AdminDashboardContent() {
         <div className="lg:col-span-2">
           <Card className="border-[var(--ink-10)] shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="font-sans text-xl text-[var(--ink)]">Próximos Agendamentos</CardTitle>
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">{t("upcoming_appointments")}</CardTitle>
               <Button variant="ghost" className="text-[var(--coral)] hover:text-[var(--coral-dark)] hover:bg-[var(--coral-pale)]">
-                Ver todos
+                {t("view_all")}
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </CardHeader>
@@ -259,7 +262,7 @@ function AdminDashboardContent() {
               {(data?.upcomingAppointments ?? []).length === 0 ? (
                 <div className="p-12 text-center">
                   <Calendar className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-                  <p className="text-[var(--ink-60)]">Nenhum agendamento futuro</p>
+                  <p className="text-[var(--ink-60)]">{t("no_appointments")}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-[var(--ink-10)]">
@@ -285,7 +288,7 @@ function AdminDashboardContent() {
 
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-[var(--ink)] truncate">{appointment.client}</p>
-                          <p className="text-sm text-[var(--ink-60)]">{appointment.service} com {appointment.professional}</p>
+                          <p className="text-sm text-[var(--ink-60)]">{appointment.service} {t("with_professional", { name: appointment.professional })}</p>
                         </div>
                       </div>
 
@@ -303,22 +306,22 @@ function AdminDashboardContent() {
                           {appointment.status === "pending" && (
                             <DropdownMenuItem onClick={() => updateStatus(appointment.id, "confirmed")}>
                               <Check className="mr-2 h-4 w-4" />
-                              Confirmar
+                              {t("action_confirm")}
                             </DropdownMenuItem>
                           )}
                           {appointment.status === "confirmed" && (
                             <DropdownMenuItem onClick={() => updateStatus(appointment.id, "completed")}>
                               <CheckCircle2 className="mr-2 h-4 w-4" />
-                              Concluir Atendimento
+                              {t("action_complete")}
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem onClick={() => window.open(`https://wa.me/55${appointment.clientPhone.replace(/\D/g, '')}`, '_blank')}>
                             <Phone className="mr-2 h-4 w-4" />
-                            Ligar / WhatsApp
+                            {t("action_call", { phone: appointment.clientPhone })}
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-[var(--error)]" onClick={() => updateStatus(appointment.id, "cancelled")}>
                             <XIcon className="mr-2 h-4 w-4" />
-                            Cancelar
+                            {t("action_cancel")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -335,25 +338,25 @@ function AdminDashboardContent() {
           {/* Quick actions */}
           <Card className="border-[var(--ink-10)] shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-xl text-[var(--ink)]">Ações Rápidas</CardTitle>
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">{t("quick_actions")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Link href="/admin/agendamentos" className="block">
                 <Button className="w-full justify-start bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
                   <Calendar className="mr-2 h-4 w-4" />
-                  Gerenciar Agendamentos
+                  {t("manage_appointments")}
                 </Button>
               </Link>
               <Link href="/admin/clientes" className="block">
                 <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
                   <Users className="mr-2 h-4 w-4" />
-                  Gerenciar Clientes
+                  {t("manage_clients")}
                 </Button>
               </Link>
               <Link href="/admin/agendamentos?block=true" className="block">
                 <Button variant="outline" className="w-full justify-start border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--coral-pale)] hover:text-[var(--coral-dark)] hover:border-[var(--coral-light)]">
                   <Clock className="mr-2 h-4 w-4" />
-                  Bloquear Horário
+                  {t("block_slot")}
                 </Button>
               </Link>
             </CardContent>
@@ -362,11 +365,11 @@ function AdminDashboardContent() {
           {/* Professionals availability */}
           <Card className="border-[var(--ink-10)] shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-xl text-[var(--ink)]">Profissionais</CardTitle>
+              <CardTitle className="font-sans text-xl text-[var(--ink)]">{t("professionals_title")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {(data?.professionals ?? []).length === 0 ? (
-                <p className="text-sm text-[var(--ink-60)] text-center py-4">Nenhum profissional cadastrado</p>
+                <p className="text-sm text-[var(--ink-60)] text-center py-4">{t("no_professionals")}</p>
               ) : (
                 (data?.professionals ?? []).map((professional) => (
                   <div key={professional.id} className="flex items-center gap-3">
@@ -386,7 +389,7 @@ function AdminDashboardContent() {
                       <p className="text-xs text-[var(--ink-60)]">{professional.role}</p>
                     </div>
                     <Badge variant="secondary" className="bg-[var(--ink-10)] text-[var(--ink-60)]">
-                      {professional.appointments} hoje
+                      {t("appointments_today", { count: professional.appointments })}
                     </Badge>
                   </div>
                 ))

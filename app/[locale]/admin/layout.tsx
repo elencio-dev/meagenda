@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "@/lib/auth-client"
 import type { AuthUser } from "@/lib/auth-client"
@@ -31,16 +32,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/agendamentos", label: "Agendamentos", icon: Calendar },
-  { href: "/admin/clientes", label: "Clientes", icon: Users },
-  { href: "/admin/profissionais", label: "Profissionais", icon: UserPlus },
-  { href: "/admin/servicos", label: "Serviços", icon: Scissors },
-  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
-]
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("Admin")
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
@@ -49,6 +42,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const empresa = session?.user as AuthUser | undefined
   const initials = empresa?.name?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() ?? "M"
   const slug = empresa?.slug
+
+  const navItems = [
+    { href: "/admin", label: t("nav_dashboard"), icon: LayoutDashboard },
+    { href: "/admin/agendamentos", label: t("nav_appointments"), icon: Calendar },
+    { href: "/admin/clientes", label: t("nav_clients"), icon: Users },
+    { href: "/admin/profissionais", label: t("nav_professionals"), icon: UserPlus },
+    { href: "/admin/servicos", label: t("nav_services"), icon: Scissors },
+    { href: "/admin/configuracoes", label: t("nav_settings"), icon: Settings },
+  ]
 
   const handleLogout = async () => {
     await signOut()
@@ -133,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <AvatarFallback className="bg-[var(--coral-pale)] text-[var(--coral-dark)]">{initials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[var(--ink)] truncate">{empresa?.name ?? "Carregando..."}</p>
+                <p className="text-sm font-medium text-[var(--ink)] truncate">{empresa?.name ?? t("loading")}</p>
                 <p className="text-xs text-[var(--ink-60)] truncate">{empresa?.email}</p>
               </div>
             </div>
@@ -167,20 +169,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <DropdownMenuItem asChild>
                       <Link href={`/${slug}`} target="_blank">
                         <ExternalLink className="mr-2 h-4 w-4" />
-                        Página pública
+                        {t("nav_public_page")}
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
                     <Link href="/admin/configuracoes">
                       <Settings className="mr-2 h-4 w-4" />
-                      Configurações
+                      {t("nav_settings")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-[var(--error)]" onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sair
+                    {t("nav_logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

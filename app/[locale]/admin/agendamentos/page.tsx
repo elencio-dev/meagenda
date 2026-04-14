@@ -16,6 +16,8 @@ import {
   Lock,
   Trash2
 } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -65,6 +67,9 @@ type Profissional = { id: number; name: string }
 type Cliente = { id: number; name: string }
 
 export default function AgendamentosPage() {
+  const t = useTranslations("Admin")
+  const locale = useLocale()
+
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [servicos, setServicos] = useState<Servico[]>([])
   const [profissionais, setProfissionais] = useState<Profissional[]>([])
@@ -111,15 +116,15 @@ export default function AgendamentosPage() {
         const blocks: Appointment[] = dataBl.map(b => ({
           id: `block-${b.id}`,
           dbId: b.id,
-          client: "Horário Bloqueado",
+          client: t("blocked_slot"),
           email: "",
           phone: "",
-          service: b.reason || "Indisponível",
+          service: b.reason || t("unavailable"),
           price: 0,
           date: b.date,
           time: b.time,
           duration: "—",
-          professional: b.profissional?.name || "Todos os Profissionais",
+          professional: b.profissional?.name || t("all_professionals"),
           status: "blocked",
           isBlock: true
         }))
@@ -138,7 +143,7 @@ export default function AgendamentosPage() {
     } finally {
       setLoading(false)
     }
-  }, [dateStr, statusFilter])
+  }, [dateStr, statusFilter, t])
 
   useEffect(() => {
     fetchAppointments()
@@ -217,7 +222,7 @@ export default function AgendamentosPage() {
   }
 
   const handleDeleteBlock = async (id: number) => {
-    if (!confirm("Remover este bloqueio de horário?")) return
+    if (!confirm(t("block_delete_confirm"))) return
     await fetch("/api/bloqueios", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -229,15 +234,15 @@ export default function AgendamentosPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Confirmado</Badge>
+        return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">{t("status_confirmed")}</Badge>
       case "pending":
-        return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">Pendente</Badge>
+        return <Badge className="bg-[var(--warning-bg)] text-[var(--warning)] hover:bg-[var(--warning-bg)] border-0">{t("status_pending")}</Badge>
       case "cancelled":
-        return <Badge className="bg-[var(--error-bg)] text-[var(--error)] hover:bg-[var(--error-bg)] border-0">Cancelado</Badge>
+        return <Badge className="bg-[var(--error-bg)] text-[var(--error)] hover:bg-[var(--error-bg)] border-0">{t("status_cancelled")}</Badge>
       case "completed":
-        return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">Concluído</Badge>
+        return <Badge className="bg-[var(--success-bg)] text-[var(--success)] hover:bg-[var(--success-bg)] border-0">{t("status_completed")}</Badge>
       case "blocked":
-        return <Badge variant="secondary" className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0"><Lock className="w-3 h-3 mr-1" /> Bloqueio</Badge>
+        return <Badge variant="secondary" className="bg-[var(--ink-10)] text-[var(--ink-60)] hover:bg-[var(--ink-10)] border-0"><Lock className="w-3 h-3 mr-1" /> {t("status_blocked")}</Badge>
       default:
         return null
     }
@@ -250,7 +255,7 @@ export default function AgendamentosPage() {
   })
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("pt-BR", { 
+    return date.toLocaleDateString(locale, { 
       weekday: "long", day: "numeric", month: "long", year: "numeric" 
     })
   }
@@ -266,8 +271,8 @@ export default function AgendamentosPage() {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-sans text-3xl text-[var(--ink)]">Agendamentos</h1>
-          <p className="text-[var(--ink-60)] mt-1">Gerencie todos os agendamentos</p>
+          <h1 className="font-sans text-3xl text-[var(--ink)]">{t("page_appointments")}</h1>
+          <p className="text-[var(--ink-60)] mt-1">{t("page_appointments_subtitle")}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -275,22 +280,22 @@ export default function AgendamentosPage() {
             <DialogTrigger asChild>
               <Button variant="outline" className="border-[var(--ink-10)] text-[var(--ink)] hover:bg-[var(--ink-10)]">
                 <Lock className="h-4 w-4 mr-2" />
-                Bloquear
+                {t("btn_block")}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle className="font-sans text-xl">Bloquear Horário</DialogTitle>
+                <DialogTitle className="font-sans text-xl">{t("block_dialog_title")}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label>Profissional</Label>
+                  <Label>{t("block_professional")}</Label>
                   <Select value={blockProfId} onValueChange={setBlockProfId}>
                     <SelectTrigger className="border-[var(--ink-10)]">
-                      <SelectValue placeholder="Aplicar bloqueio para quem?" />
+                      <SelectValue placeholder={t("block_professional")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Geral (Todos os Profissionais)</SelectItem>
+                      <SelectItem value="all">{t("block_all_professionals")}</SelectItem>
                       {profissionais.map(p => (
                         <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>
                       ))}
@@ -299,7 +304,7 @@ export default function AgendamentosPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Data</Label>
+                    <Label>{t("block_date")}</Label>
                     <Input 
                       type="date" 
                       value={blockDate}
@@ -308,7 +313,7 @@ export default function AgendamentosPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Horário</Label>
+                    <Label>{t("block_time")}</Label>
                     <Input 
                       type="time" 
                       value={blockTime}
@@ -318,11 +323,11 @@ export default function AgendamentosPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Motivo ou Observação (Opcional)</Label>
+                  <Label>{t("block_reason")}</Label>
                   <Input 
                     value={blockReason}
                     onChange={e => setBlockReason(e.target.value)}
-                    placeholder="Ex: Almoço, Folga, Evento" 
+                    placeholder={t("block_reason_placeholder")} 
                     className="border-[var(--ink-10)]"
                   />
                 </div>
@@ -332,7 +337,7 @@ export default function AgendamentosPage() {
                   disabled={submitting}
                 >
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Confirmar Bloqueio
+                  {t("block_confirm_btn")}
                 </Button>
               </div>
             </DialogContent>
@@ -342,19 +347,19 @@ export default function AgendamentosPage() {
             <DialogTrigger asChild>
               <Button className="bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white">
                 <Plus className="h-4 w-4 mr-2" />
-                Novo Agendamento
+                {t("btn_new_appointment")}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="font-sans text-xl">Novo Agendamento</DialogTitle>
+              <DialogTitle className="font-sans text-xl">{t("new_appt_dialog_title")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Cliente</Label>
+                <Label>{t("appt_client")}</Label>
                 <Select value={formClienteId} onValueChange={setFormClienteId}>
                   <SelectTrigger className="border-[var(--ink-10)]">
-                    <SelectValue placeholder="Selecione o cliente" />
+                    <SelectValue placeholder={t("appt_client_placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {clientes.map(c => (
@@ -364,10 +369,10 @@ export default function AgendamentosPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Serviço</Label>
+                <Label>{t("appt_service")}</Label>
                 <Select value={formServicoId} onValueChange={setFormServicoId}>
                   <SelectTrigger className="border-[var(--ink-10)]">
-                    <SelectValue placeholder="Selecione o serviço" />
+                    <SelectValue placeholder={t("appt_service_placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {servicos.filter(s => (s as { active?: boolean }).active !== false).map(s => (
@@ -377,10 +382,10 @@ export default function AgendamentosPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Profissional</Label>
+                <Label>{t("appt_professional")}</Label>
                 <Select value={formProfissionalId} onValueChange={setFormProfissionalId}>
                   <SelectTrigger className="border-[var(--ink-10)]">
-                    <SelectValue placeholder="Selecione o profissional" />
+                    <SelectValue placeholder={t("appt_professional_placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {profissionais.map(p => (
@@ -391,7 +396,7 @@ export default function AgendamentosPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Data</Label>
+                  <Label>{t("appt_date")}</Label>
                   <Input 
                     type="date" 
                     value={formDate}
@@ -400,7 +405,7 @@ export default function AgendamentosPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Horário</Label>
+                  <Label>{t("appt_time")}</Label>
                   <Input 
                     type="time" 
                     value={formTime}
@@ -415,7 +420,7 @@ export default function AgendamentosPage() {
                 disabled={submitting}
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Criar Agendamento
+                {t("appt_create_btn")}
               </Button>
             </div>
           </DialogContent>
@@ -454,7 +459,7 @@ export default function AgendamentosPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-30)]" />
           <Input 
-            placeholder="Buscar por cliente ou serviço..." 
+            placeholder={t("search_placeholder")} 
             className="pl-10 border-[var(--ink-10)] focus:border-[var(--coral)] focus:ring-[var(--coral)]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -466,12 +471,12 @@ export default function AgendamentosPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="confirmed">Confirmados</SelectItem>
-            <SelectItem value="pending">Pendentes</SelectItem>
-            <SelectItem value="completed">Concluídos</SelectItem>
-            <SelectItem value="blocked">Bloqueados</SelectItem>
-            <SelectItem value="cancelled">Cancelados</SelectItem>
+            <SelectItem value="all">{t("filter_all")}</SelectItem>
+            <SelectItem value="confirmed">{t("filter_confirmed")}</SelectItem>
+            <SelectItem value="pending">{t("filter_pending")}</SelectItem>
+            <SelectItem value="completed">{t("filter_completed")}</SelectItem>
+            <SelectItem value="blocked">{t("filter_blocked")}</SelectItem>
+            <SelectItem value="cancelled">{t("filter_cancelled")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -480,7 +485,7 @@ export default function AgendamentosPage() {
       <Card className="border-[var(--ink-10)] shadow-sm">
         <CardHeader className="pb-0">
           <CardTitle className="font-sans text-xl text-[var(--ink)]">
-            {loading ? "Carregando..." : `${filteredAppointments.length} agendamentos`}
+            {loading ? t("loading") : t("appointments_count", { count: filteredAppointments.length })}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 mt-4">
@@ -516,7 +521,7 @@ export default function AgendamentosPage() {
                         <span className="sm:hidden text-sm text-[var(--ink-60)]">{appointment.time}</span>
                       </div>
                       <p className="text-sm text-[var(--ink-60)]">{appointment.service}</p>
-                      <p className="text-xs text-[var(--ink-30)]">com {appointment.professional}</p>
+                      <p className="text-xs text-[var(--ink-30)]">{t("with_professional", { name: appointment.professional })}</p>
                     </div>
                   </div>
 
@@ -536,7 +541,7 @@ export default function AgendamentosPage() {
                          size="icon" 
                          className="text-[var(--error)] hover:bg-[var(--error-bg)]"
                          onClick={() => appointment.dbId && handleDeleteBlock(appointment.dbId)}
-                         title="Remover Bloqueio"
+                         title={t("block_delete_confirm")}
                        >
                          <Trash2 className="h-4 w-4" />
                        </Button>
@@ -550,18 +555,18 @@ export default function AgendamentosPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => appointment.dbId && updateStatus(appointment.dbId, "confirmed")}>
                             <Check className="mr-2 h-4 w-4" />
-                            Confirmar
+                            {t("action_confirm")}
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Phone className="mr-2 h-4 w-4" />
-                            Ligar para {appointment.phone}
+                            {t("action_call", { phone: appointment.phone })}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="text-[var(--error)]"
                             onClick={() => appointment.dbId && updateStatus(appointment.dbId, "cancelled")}
                           >
                             <XIcon className="mr-2 h-4 w-4" />
-                            Cancelar
+                            {t("action_cancel")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -575,7 +580,7 @@ export default function AgendamentosPage() {
           {!loading && filteredAppointments.length === 0 && (
             <div className="p-12 text-center">
               <CalendarIcon className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-              <p className="text-[var(--ink-60)]">Nenhum agendamento encontrado</p>
+              <p className="text-[var(--ink-60)]">{t("no_appointments_found")}</p>
             </div>
           )}
         </CardContent>
