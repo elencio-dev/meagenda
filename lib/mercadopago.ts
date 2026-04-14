@@ -26,16 +26,31 @@ function getHeaders() {
  * Cria uma nova assinatura associada ao plano especificado
  */
 export async function createSubscription(planId: string, payerEmail: string, userId: string): Promise<CreateSubscriptionResult> {
+  // Busca o plano para herdar as configurações de auto_recurring (preço, frequência)
+  const planRes = await fetch(`${MP_API_BASE}/preapproval_plan/${planId}`, {
+    method: "GET",
+    headers: getHeaders()
+  })
+
+  if (!planRes.ok) {
+    const errorData = await planRes.json().catch(() => ({}))
+    throw new Error(`Erro ao buscar plano no MP: ${JSON.stringify(errorData)}`)
+  }
+
+  const planData = await planRes.json()
+
+  // Cria a preapproval (assinatura pendente de pagamento)
+  // Utilizar auto_recurring diretamente permite gerar o init_point (checkout link) 
+  // sem exigir o `card_token_id` para processamento no backend.
   const res = await fetch(`${MP_API_BASE}/preapproval`, {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify({
-      preapproval_plan_id: planId,
       payer_email: payerEmail,
       external_reference: userId,
-      reason: "MeAgenda PRO",
+      reason: planData.reason || "MeAgenda PRO",
       back_url: "https://meagendaqui.shop/admin?upgrade=success",
-      status: "pending"
+      auto_recurring: planData.auto_recurring
     })
   })
 
