@@ -12,6 +12,7 @@ import { BookingConfirmation } from "@/components/booking-confirmation"
 import { BusinessInfo } from "@/components/business-info"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import type { BookingData, BookingResult } from "@/lib/types"
+import { toast } from "sonner"
 
 export function BookingClientFlow({ slug, initialData }: { slug: string; initialData: BookingData }) {
   const t = useTranslations("Booking")
@@ -57,35 +58,20 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
     setIsSubmitting(true)
 
     try {
-      const clientRes = await fetch(`/api/clientes?slug=${slug}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: formData.name, email: formData.email, phone: formData.phone, slug }),
-      })
-
-      let clienteId: number
-      if (clientRes.status === 409) {
-        const allRes = await fetch(`/api/clientes?slug=${slug}`)
-        const all = await allRes.json()
-        const existing = all.find((c: { email: string; id: number }) => c.email === formData.email)
-        clienteId = existing?.id
-      } else {
-        const client = await clientRes.json()
-        clienteId = client.id
-      }
-
       const dateStr = selectedDate.toISOString().split("T")[0]
-      const agRes = await fetch(`/api/agendamentos?slug=${slug}`, {
+      const agRes = await fetch(`/api/booking`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clienteId,
+          slug,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
           servicoId: selectedServiceId,
           profissionalId: selectedProfessionalId,
           date: dateStr,
           time: selectedTime,
           notes: formData.notes,
-          slug,
         }),
       })
 
@@ -108,11 +94,11 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
         handleNextStep()
       } else {
         const err = await agRes.json()
-        alert(err.error + (err.details ? `\n\n${t("error_details")}: ` + err.details : "") || t("error_time_unavailable"))
+        toast.error(err.error || t("error_time_unavailable"), { description: err.details ? `${t("error_details")}: ${err.details}` : undefined })
       }
     } catch (e) {
       console.error(e)
-      alert(t("error_processing"))
+      toast.error(t("error_processing"))
     } finally {
       setIsSubmitting(false)
     }
@@ -184,7 +170,7 @@ export function BookingClientFlow({ slug, initialData }: { slug: string; initial
           )}
           <div>
             <span className="font-sans text-xl text-[var(--ink)]">{bookingData.business.name}</span>
-            <span className="text-[var(--ink-30)] text-sm ml-2">{t("powered_by")}</span>
+            <span className="text-[var(--ink-60)] text-sm ml-2">{t("powered_by")}</span>
           </div>
           <div className="ml-auto">
             <LanguageSwitcher />

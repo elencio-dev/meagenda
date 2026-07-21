@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getUserId, getSessionUser } from "@/lib/auth-helpers"
+import { getSessionUser } from "@/lib/auth-helpers"
 import { findClientsByUserId, createClient, updateClientStatus } from "@/lib/client-service"
 
 export async function GET(request: NextRequest) {
-  const userId = await getUserId(request)
-  if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const user = await getSessionUser(request)
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
   try {
-    const clientes = await findClientsByUserId(userId)
+    const clientes = await findClientsByUserId(user.id)
     return NextResponse.json(clientes)
   } catch (error) {
     console.error("[GET /api/clientes]", error)
@@ -16,12 +16,12 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const userId = await getUserId(request)
-  if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const user = await getSessionUser(request)
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
   try {
     const body = await request.json()
-    const cliente = await createClient({ ...body, userId })
+    const cliente = await createClient({ ...body, userId: user.id })
     return NextResponse.json(cliente, { status: 201 })
   } catch (error: any) {
     console.error("[POST /api/clientes]", error)

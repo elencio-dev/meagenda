@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { DM_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const dmSans = DM_Sans({ 
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: '--font-sans',
+  variable: '--font-dm-sans',
   weight: ['300', '400', '500', '600', '700']
 });
 
@@ -17,6 +18,12 @@ export const metadata: Metadata = {
 
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, setRequestLocale} from 'next-intl/server';
+import {routing} from '@/i18n/routing';
+
+// Pre-render both locales at build time (static rendering).
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({locale}));
+}
 
 export default async function RootLayout({
   children,
@@ -39,6 +46,7 @@ export default async function RootLayout({
       <body className={`${dmSans.variable} font-sans antialiased`}>
         <NextIntlClientProvider messages={messages}>
           {children}
+          <Toaster richColors position="top-center" />
           <Analytics />
         </NextIntlClientProvider>
       </body>

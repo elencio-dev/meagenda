@@ -70,6 +70,31 @@ export async function createClient(payload: CreateClientPayload) {
 }
 
 /**
+ * Public-booking safe: returns the existing client (by email+userId) or creates one.
+ * Never throws on duplicate and never exposes the tenant's full client list —
+ * used by the public booking endpoint so callers only ever receive their own id.
+ */
+export async function findOrCreateClient(payload: CreateClientPayload) {
+  const { userId, name, email, phone, birthDate } = payload
+
+  const existing = await prisma.cliente.findUnique({
+    where: { email_userId: { email, userId } },
+  })
+
+  if (existing) return existing
+
+  return prisma.cliente.create({
+    data: {
+      userId,
+      name,
+      email,
+      phone: phone ?? "",
+      birthDate: birthDate ? new Date(birthDate) : undefined,
+    },
+  })
+}
+
+/**
  * Updates a client's status (active/inactive, etc).
  */
 export async function updateClientStatus(id: number, userId: string, status: string | ClienteStatus) {

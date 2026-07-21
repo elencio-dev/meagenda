@@ -5,15 +5,20 @@
 
 :root {
   /* --- Paleta Principal --- */
-  --coral: #E8503A;
+  /* Coral acessível: base #C73D28 passa WCAG AA (4.5:1) com texto branco,
+     como texto no paper e como texto em chips coral-pale; dark p/ hover. */
+  --coral: #C73D28;
   --coral-light: #F28070;
   --coral-pale: #FDF0EE;
-  --coral-dark: #C73D28;
+  --coral-dark: #A62F1E;
 
-  /* --- Neutros --- */
+  /* --- Neutros (escala clareando do ink ao paper) --- */
   --ink: #1A1A18;
+  --ink-80: #40403B;
   --ink-60: #666660;
+  --ink-40: #8C8C86;
   --ink-30: #B3B3AD;
+  --ink-20: #CFCFCB;
   --ink-10: #EBEBEA;
   --paper: #FAFAF8;
   --white: #FFFFFF;
@@ -50,9 +55,9 @@
 }
 
 @theme inline {
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-serif: var(--font-sans);
-  --font-mono: 'Geist Mono', monospace;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-serif: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -83,8 +88,11 @@
   --color-coral-pale: var(--coral-pale);
   --color-coral-dark: var(--coral-dark);
   --color-ink: var(--ink);
+  --color-ink-80: var(--ink-80);
   --color-ink-60: var(--ink-60);
+  --color-ink-40: var(--ink-40);
   --color-ink-30: var(--ink-30);
+  --color-ink-20: var(--ink-20);
   --color-ink-10: var(--ink-10);
   --color-paper: var(--paper);
   --color-success: var(--success);

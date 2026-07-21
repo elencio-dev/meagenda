@@ -15,7 +15,7 @@ export default async function PublicBookingPage({ params }: { params: Promise<{ 
   if (!user) {
     return (
       <div className="min-h-screen bg-[var(--paper)] flex flex-col items-center justify-center gap-4">
-        <CalendarIcon className="h-16 w-16 text-[var(--ink-30)]" />
+        <CalendarIcon className="h-16 w-16 text-[var(--ink-40)]" />
         <h1 className="font-sans text-2xl text-[var(--ink)]">{t("not_found_title")}</h1>
         <p className="text-[var(--ink-60)]">{t("not_found_desc", { slug })}</p>
       </div>

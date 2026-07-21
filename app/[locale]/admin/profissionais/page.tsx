@@ -127,7 +127,7 @@ export default function ProfissionaisPage() {
             <div className="text-center">
               <h3 className="font-medium text-[var(--ink)] mb-1">{t("prof_empty_title")}</h3>
               <p className="text-sm text-[var(--ink-60)]">{t("prof_empty_desc")}</p>
-              <p className="text-xs text-[var(--ink-30)] mt-1">{t("prof_empty_note")}</p>
+              <p className="text-xs text-[var(--ink-60)] mt-1">{t("prof_empty_note")}</p>
             </div>
             <Button onClick={openCreate} className="bg-[var(--coral)] hover:bg-[var(--coral-dark)] text-white gap-2 rounded-xl mt-2">
               <UserPlus className="h-4 w-4" />{t("btn_add_first_professional")}
@@ -159,7 +159,7 @@ export default function ProfissionaisPage() {
                     }
                   </Button>
                   <Button size="sm" variant="outline" className="rounded-lg" onClick={() => openEdit(p)}><Pencil className="h-3 w-3" /></Button>
-                  <Button size="sm" variant="outline" className="rounded-lg text-red-500 hover:bg-red-50 hover:border-red-200" onClick={() => handleDelete(p.id)}>
+                  <Button size="sm" variant="outline" className="rounded-lg text-error hover:bg-error-bg hover:border-error" onClick={() => handleDelete(p.id)}>
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>

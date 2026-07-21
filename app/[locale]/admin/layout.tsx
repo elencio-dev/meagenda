@@ -1,9 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { Link, useRouter, usePathname } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "@/lib/auth-client"
