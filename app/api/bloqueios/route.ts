@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getUserId } from "@/lib/auth-helpers"
+import { getSessionUser } from "@/lib/auth-helpers"
 import { z } from "zod"
 
 const bloqueioSchema = z.object({
@@ -11,8 +11,9 @@ const bloqueioSchema = z.object({
 })
 
 export async function GET(request: NextRequest) {
-  const userId = await getUserId(request)
-  if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const user = await getSessionUser(request)
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const userId = user.id
 
   const { searchParams } = request.nextUrl
   const dateParam = searchParams.get("date")
@@ -41,8 +42,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const userId = await getUserId(request)
-  if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const user = await getSessionUser(request)
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const userId = user.id
 
   try {
     const body = await request.json()
@@ -72,8 +74,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const userId = await getUserId(request)
-  if (!userId) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const user = await getSessionUser(request)
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
+  const userId = user.id
 
   try {
     const body = await request.json()

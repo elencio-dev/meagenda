@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/auth-client"
+import { toast } from "sonner"
 
 export default function ConfiguracoesPage() {
   const t = useTranslations("Admin")
@@ -56,7 +57,7 @@ export default function ConfiguracoesPage() {
       if (!res.ok) throw new Error("Falha ao iniciar assinatura")
       const { initPoint } = await res.json()
       window.location.href = initPoint
-    } catch { alert(t("billing_upgrade_start_error")); setLoadingBilling(false) }
+    } catch { toast.error(t("billing_upgrade_start_error")); setLoadingBilling(false) }
   }
 
   const handleCancelSubscription = async () => {
@@ -65,10 +66,10 @@ export default function ConfiguracoesPage() {
     try {
       const res = await fetch("/api/billing/cancel", { method: "POST" })
       if (!res.ok) throw new Error("Erros ao cancelar no Mercado Pago")
-      alert(t("billing_cancel_success"))
+      toast.success(t("billing_cancel_success"))
       const freshData = await fetch("/api/configuracoes").then(r => r.json())
       if (freshData.billing) setBilling(freshData.billing)
-    } catch { alert(t("billing_cancel_error")) } finally { setLoadingBilling(false) }
+    } catch { toast.error(t("billing_cancel_error")) } finally { setLoadingBilling(false) }
   }
 
   const intervalOptions = [
@@ -90,7 +91,7 @@ export default function ConfiguracoesPage() {
       </div>
 
       {(error || success) && (
-        <div className={`p-4 rounded-xl text-sm font-medium ${error ? "bg-red-50 text-red-600" : "bg-green-50 text-green-700"}`}>{error || success}</div>
+        <div className={`p-4 rounded-xl text-sm font-medium ${error ? "bg-error-bg text-error" : "bg-success-bg text-success"}`}>{error || success}</div>
       )}
 
       {/* Company Profile */}
@@ -220,13 +221,13 @@ export default function ConfiguracoesPage() {
                   </p>
                 </div>
                 {billing.plan === "PRO" && billing.subscriptionStatus === "authorized" && (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{t("billing_status_active")}</span>
+                  <span className="px-3 py-1 bg-success-bg text-success rounded-full text-xs font-semibold">{t("billing_status_active")}</span>
                 )}
                 {billing.plan === "PRO" && billing.subscriptionStatus === "paused" && (
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">{t("billing_status_pending")}</span>
+                  <span className="px-3 py-1 bg-warning-bg text-warning rounded-full text-xs font-semibold">{t("billing_status_pending")}</span>
                 )}
                 {billing.plan === "PRO" && billing.subscriptionStatus === "cancelled" && (
-                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">{t("billing_status_cancelled")}</span>
+                  <span className="px-3 py-1 bg-error-bg text-error rounded-full text-xs font-semibold">{t("billing_status_cancelled")}</span>
                 )}
               </div>
 
@@ -246,8 +247,8 @@ export default function ConfiguracoesPage() {
               )}
 
               {billing.plan === "PRO" && billing.planExpiresAt && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-amber-800 text-sm font-medium">
+                <div className="p-3 bg-warning-bg border border-warning rounded-lg">
+                  <p className="text-warning text-sm font-medium">
                     {t("billing_expires_warning", { date: new Date(billing.planExpiresAt).toLocaleDateString(locale) })}
                   </p>
                 </div>
@@ -255,7 +256,7 @@ export default function ConfiguracoesPage() {
 
               {billing.plan === "PRO" && billing.subscriptionStatus === "authorized" && (
                 <div className="pt-4 flex justify-end">
-                  <Button onClick={handleCancelSubscription} disabled={loadingBilling} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
+                  <Button onClick={handleCancelSubscription} disabled={loadingBilling} variant="outline" className="border-error text-error hover:bg-error-bg hover:border-error">
                     {loadingBilling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                     {t("billing_cancel_btn")}
                   </Button>

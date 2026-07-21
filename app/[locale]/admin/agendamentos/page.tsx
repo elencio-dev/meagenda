@@ -457,7 +457,7 @@ export default function AgendamentosPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-30)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-40)]" />
           <Input 
             placeholder={t("search_placeholder")} 
             className="pl-10 border-[var(--ink-10)] focus:border-[var(--coral)] focus:ring-[var(--coral)]"
@@ -521,7 +521,7 @@ export default function AgendamentosPage() {
                         <span className="sm:hidden text-sm text-[var(--ink-60)]">{appointment.time}</span>
                       </div>
                       <p className="text-sm text-[var(--ink-60)]">{appointment.service}</p>
-                      <p className="text-xs text-[var(--ink-30)]">{t("with_professional", { name: appointment.professional })}</p>
+                      <p className="text-xs text-[var(--ink-60)]">{t("with_professional", { name: appointment.professional })}</p>
                     </div>
                   </div>
 
@@ -578,9 +578,11 @@ export default function AgendamentosPage() {
           )}
 
           {!loading && filteredAppointments.length === 0 && (
-            <div className="p-12 text-center">
-              <CalendarIcon className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-              <p className="text-[var(--ink-60)]">{t("no_appointments_found")}</p>
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <div className="w-16 h-16 rounded-full bg-[var(--coral-pale)] flex items-center justify-center">
+                <CalendarIcon className="h-8 w-8 text-[var(--coral)]" />
+              </div>
+              <p className="text-[var(--ink-60)] text-center">{t("no_appointments_found")}</p>
             </div>
           )}
         </CardContent>

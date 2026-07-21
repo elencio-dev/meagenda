@@ -1,10 +1,12 @@
 import { Link } from "@/i18n/routing"
-import { useTranslations } from "next-intl"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { ArrowRight, Activity, Command, BarChart2, Zap, Shield, Star, Users, CheckCircle2, Calendar, X as XIcon } from "lucide-react"
 import { LanguageSwitcher } from "@/components/language-switcher"
 
-export default function LandingPage() {
-  const t = useTranslations("LandingPage")
+export default async function LandingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations("LandingPage")
   const currentYear = new Date().getFullYear()
 
   return (
@@ -52,7 +54,7 @@ export default function LandingPage() {
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
             <span className="text-[var(--ink)]">{t('hero_title_1')}</span>
             <br />
-            <span className="text-[#2F9E73]">{t('hero_title_2')}</span>
+            <span className="text-[var(--success)]">{t('hero_title_2')}</span>
           </h1>
           
           <p className="text-lg md:text-xl text-[var(--ink-60)] max-w-2xl mx-auto mb-12 leading-relaxed">
@@ -60,7 +62,7 @@ export default function LandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 max-w-xl mx-auto">
-            <div className="flex w-full items-center bg-white border border-[var(--ink-10)] rounded-full px-2 py-1.5 focus-within:ring-2 focus-within:ring-[#2F9E73] focus-within:border-[#2F9E73] transition-all flex-1 shadow-sm">
+            <div className="flex w-full items-center bg-white border border-[var(--ink-10)] rounded-full px-2 py-1.5 focus-within:ring-2 focus-within:ring-[var(--success)] focus-within:border-[var(--success)] transition-all flex-1 shadow-sm">
               <span className="text-[var(--ink-30)] font-medium pl-4 hidden sm:inline">meagenda.com/</span>
               <input 
                 type="text" 
@@ -103,7 +105,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             
             {/* Step 1: Link Próprio */}
-            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <span className="text-8xl font-black italic">1</span>
               </div>
@@ -126,7 +128,7 @@ export default function LandingPage() {
             </div>
 
             {/* Step 2: Cliente Agenda */}
-            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <span className="text-8xl font-black italic">2</span>
               </div>
@@ -139,7 +141,7 @@ export default function LandingPage() {
                   <div className="px-4 py-2 bg-[var(--coral)] text-white text-xs rounded-lg font-medium shadow-[0_2px_8px_rgba(232,80,58,0.25)] relative">
                     14:00
                     <div className="absolute -bottom-4 -right-2 bg-white rounded-full p-1 shadow-md border border-[var(--ink-10)]">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" />
+                      <div className="w-3 h-3 bg-[var(--coral)] rounded-full animate-bounce" />
                     </div>
                   </div>
                   <div className="px-4 py-2 bg-white border border-[var(--ink-10)] text-[var(--ink)] text-xs rounded-lg">14:30</div>
@@ -153,7 +155,7 @@ export default function LandingPage() {
             </div>
 
             {/* Step 3: Confirmação Automática */}
-            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-3xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
+            <div className="col-span-1 bg-[var(--card)] border border-[var(--ink-10)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-all flex flex-col relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <span className="text-8xl font-black italic">3</span>
               </div>
@@ -171,8 +173,8 @@ export default function LandingPage() {
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-[var(--success)] mb-1">Agendamento Confirmado!</div>
-                    <div className="text-xs text-[var(--success)]/80 leading-tight">Você reservou <strong>Corte Premium</strong> para Sexta-feira às <strong>14:00h</strong>.</div>
+                    <div className="text-sm font-bold text-[var(--success)] mb-1">{t('hero_notify_title')}</div>
+                    <div className="text-xs text-[var(--success)]/80 leading-tight">{t.rich('hero_notify_body', { b: (chunks) => <strong>{chunks}</strong> })}</div>
                   </div>
                 </div>
               </div>
@@ -185,7 +187,7 @@ export default function LandingPage() {
           </div>
 
           {/* Step 4: Dashboard Integrado (Wide Bottom) */}
-          <div className="grid grid-cols-1 md:grid-cols-4 bg-[var(--coral)] rounded-3xl p-8 shadow-[0_8px_30px_rgba(232,80,58,0.15)] overflow-hidden relative">
+          <div className="grid grid-cols-1 md:grid-cols-4 bg-[var(--coral)] rounded-2xl p-8 shadow-[0_8px_30px_rgba(232,80,58,0.15)] overflow-hidden relative">
             <div className="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none">
                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-white">
                   <path d="M0,100 C30,50 70,50 100,0 L100,100 Z" />
@@ -241,44 +243,26 @@ export default function LandingPage() {
           </div>
 
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {[
-              {
-                text: "A plataforma transformou completamente a forma como agendamos serviços. Lançamos a agenda nova em 5 minutos ao invés de meses configurando sistemas antigos.",
-                name: "Juliana Silva", role: "Dona de Clínica de Estética", avatar: "5"
-              },
-              {
-                text: "Integração perfeita que melhorou nossas operações de barbearia e a eficiência da equipe. Meu salão não vive sem.",
-                name: "Tiago Mendes", role: "Gestor na BarberShop XP", avatar: "11"
-              },
-              {
-                text: "Aumentamos nossa receita em 30% já no primeiro mês diminuindo as mensagens no WhatsApp e a facilidade do cliente marcar sozinho 24h por dia.",
-                name: "Raquel Kim", role: "Diretora de Salão", avatar: "9"
-              },
-              {
-                text: "Recursos incríveis. Tudo que gerencia as comissões dos meus 15 barbeiros em um só lugar de forma limpa.",
-                name: "Marcos Junior", role: "CEO do Studio Alpha", avatar: "68"
-              },
-              {
-                text: "A melhor decisão do ano foi migrar nossa agenda de papel para a plataforma. Acabou os furos de clientes e ter buracos na grade (no-shows).",
-                name: "Camila Torres", role: "Manicure Autônoma", avatar: "44"
-              },
-            ].map((t, idx) => (
-              <div key={idx} className="break-inside-avoid bg-[var(--card)] shadow-sm hover:shadow-md transition-shadow border border-[var(--ink-10)] p-8 rounded-3xl">
+            {["5", "11", "9", "68", "44"].map((avatar, idx) => {
+              const n = idx + 1
+              return (
+              <div key={idx} className="break-inside-avoid bg-[var(--card)] shadow-sm hover:shadow-md transition-shadow border border-[var(--ink-10)] p-8 rounded-2xl">
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-[var(--coral)] text-[var(--coral)]" />)}
                 </div>
-                <p className="text-[var(--ink-60)] mb-8 text-[15px] leading-relaxed">"{t.text}"</p>
+                <p className="text-[var(--ink-60)] mb-8 text-[15px] leading-relaxed">"{t(`testimonial_${n}_text`)}"</p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-[var(--ink-10)] overflow-hidden flex-shrink-0">
-                    <img src={`https://i.pravatar.cc/100?img=${t.avatar}`} alt={t.name} className="w-full h-full object-cover" />
+                    <img src={`https://i.pravatar.cc/100?img=${avatar}`} alt={t(`testimonial_${n}_name`)} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h4 className="text-[15px] font-bold text-[var(--ink)]">{t.name}</h4>
-                    <p className="text-sm text-[var(--ink-60)] font-medium">{t.role}</p>
+                    <h4 className="text-[15px] font-bold text-[var(--ink)]">{t(`testimonial_${n}_name`)}</h4>
+                    <p className="text-sm text-[var(--ink-60)] font-medium">{t(`testimonial_${n}_role`)}</p>
                   </div>
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -294,7 +278,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             
             {/* Grátis Plan */}
-            <div className="bg-[#FAF9F6] rounded-3xl p-8 border border-[var(--ink-10)] shadow-sm">
+            <div className="bg-[var(--paper)] rounded-2xl p-8 border border-[var(--ink-10)] shadow-sm">
               <div className="mb-6">
                 <h3 className="text-xl font-medium text-[var(--ink)] mb-2">{t('pricing_free_title')}</h3>
                 <div className="flex items-baseline gap-1">
@@ -306,27 +290,27 @@ export default function LandingPage() {
               
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_page')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_limit_free')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_prof_free')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-60)]">
-                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-error" /></div>
                   {t('feature_item_catalog')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-60)]">
-                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-red-500" /></div>
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0"><XIcon className="w-4 h-4 text-error" /></div>
                   {t('feature_item_reminders')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_dashboard')}
                 </li>
               </ul>
@@ -335,14 +319,14 @@ export default function LandingPage() {
                 <Link href="/register" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[var(--ink-40)] hover:bg-[var(--ink-10)] transition-all">
                   {t('pricing_btn_free')}
                 </Link>
-                <p className="text-[13px] text-[#b33a3a] mt-4 font-medium">{t('pricing_limit')}</p>
+                <p className="text-[13px] text-[var(--error)] mt-4 font-medium">{t('pricing_limit')}</p>
               </div>
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-white rounded-3xl p-8 border-2 border-[#2F9E73] shadow-md relative">
+            <div className="bg-white rounded-2xl p-8 border-2 border-[var(--success)] shadow-md relative">
               <div className="absolute top-0 right-8 -translate-y-1/2">
-                <span className="bg-[#E5F5EF] text-[#2F9E73] text-sm font-semibold px-4 py-1.5 rounded-full">{t('pricing_popular')}</span>
+                <span className="bg-[var(--success-bg)] text-[var(--success)] text-sm font-semibold px-4 py-1.5 rounded-full">{t('pricing_popular')}</span>
               </div>
               
               <div className="mb-6">
@@ -356,33 +340,33 @@ export default function LandingPage() {
               
               <ul className="space-y-4 mb-8">
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_page')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_limit_pro')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_prof_pro')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_reminders')}
                 </li>
                 <li className="flex items-center gap-3 text-[var(--ink-80)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   {t('feature_item_dashboard')}
                 </li>
                 <li className="flex gap-3 items-start text-[var(--ink)]">
-                  <div className="w-5 h-5 rounded-full bg-[#E5F5EF] flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-3.5 h-3.5 text-[#2F9E73]" /></div>
+                  <div className="w-5 h-5 rounded-full bg-[var(--success-bg)] flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--success)]" /></div>
                   <div><p className="font-semibold text-sm">{t('feature_item_catalog')}</p><p className="text-xs text-[var(--ink-60)] leading-tight">{t('feature_item_catalog_desc')}</p></div>
                 </li>
               </ul>
               
               <div className="text-center mt-auto pt-4">
-                <Link href="/register?plan=pro" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[#2F9E73] hover:text-[#2F9E73] transition-all">
+                <Link href="/register?plan=pro" className="block w-full py-3.5 border border-[var(--ink-20)] text-[var(--ink)] font-bold rounded-xl hover:border-[var(--success)] hover:text-[var(--success)] transition-all">
                   {t('pricing_btn_pro')}
                 </Link>
               </div>
@@ -393,7 +377,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)] text-center text-sm font-medium text-[var(--ink-30)]">
+      <footer className="py-12 px-6 border-t border-[var(--ink-10)] bg-[var(--paper)] text-center text-sm font-medium text-[var(--ink-60)]">
         <p>{t('footer_copy', { year: currentYear })}</p>
       </footer>
 

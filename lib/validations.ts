@@ -10,6 +10,18 @@ export const publicBookingSchema = z.object({
   slug: z.string().min(1, "Slug da empresa obrigatório").optional()
 });
 
+export const publicBookingRequestSchema = z.object({
+  slug: z.string().min(1, "Slug da empresa obrigatório"),
+  name: z.string().min(2, "Nome obrigatório"),
+  email: z.string().email("E-mail inválido"),
+  phone: z.string().min(1, "Telefone obrigatório"),
+  servicoId: z.number().int().positive("Serviço é obrigatório"),
+  profissionalId: z.number().int().positive("Profissional ID inválido").nullable().optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato YYYY-MM-DD"),
+  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Horário inválido"),
+  notes: z.string().optional().nullable(),
+});
+
 export const updateBookingSchema = z.object({
   id: z.number().int().positive("ID é obrigatório"),
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]).optional(),

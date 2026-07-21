@@ -15,7 +15,7 @@ import {
   CheckCircle2
 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 type DashboardData = {
   billing?: {
@@ -105,7 +106,7 @@ function AdminDashboardContent() {
       window.location.href = initPoint
     } catch(err) {
       console.error(err)
-      alert(t("billing_upgrade_error"))
+      toast.error(t("billing_upgrade_error"))
       setLoading(false)
     }
   }
@@ -191,7 +192,7 @@ function AdminDashboardContent() {
       </div>
 
       {isUpgradeSuccess && (
-        <div className="bg-emerald-50 border border-emerald-400 text-emerald-800 px-4 py-3 rounded relative mb-4">
+        <div className="bg-success-bg border border-success text-success px-4 py-3 rounded relative mb-4">
           <strong className="font-bold flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5" /> {t("upgrade_success_title")}
           </strong>
@@ -201,18 +202,18 @@ function AdminDashboardContent() {
 
       {/* Banner de Plano */}
       {data?.billing && (
-        <Card className={cn("border-2 shadow-sm", data.billing.plan === "PRO" ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50")}>
+        <Card className={cn("border-2 shadow-sm", data.billing.plan === "PRO" ? "border-success bg-success-bg" : "border-warning bg-warning-bg")}>
           <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-[var(--ink)]">
                   {t("billing_current_plan")}: {data.billing.planName}
                 </h3>
-                {data.billing.plan === "PRO" && <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0">{t("billing_premium_active")}</Badge>}
+                {data.billing.plan === "PRO" && <Badge className="bg-success hover:bg-success/90 text-white border-0">{t("billing_premium_active")}</Badge>}
               </div>
               <p className="text-sm text-[var(--ink-60)]">
                 {data.billing.plan === "FREE" 
-                  ? t("billing_free_usage", { current: data.billing.currentAppointments, max: data.billing.maxAppointments })
+                  ? t("billing_free_usage", { current: data.billing.currentAppointments ?? 0, max: data.billing.maxAppointments })
                   : t("billing_pro_usage")}
               </p>
             </div>
@@ -261,7 +262,7 @@ function AdminDashboardContent() {
             <CardContent className="p-0">
               {(data?.upcomingAppointments ?? []).length === 0 ? (
                 <div className="p-12 text-center">
-                  <Calendar className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
+                  <Calendar className="h-12 w-12 mx-auto text-[var(--ink-40)] mb-4" />
                   <p className="text-[var(--ink-60)]">{t("no_appointments")}</p>
                 </div>
               ) : (

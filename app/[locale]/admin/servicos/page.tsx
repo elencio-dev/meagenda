@@ -277,10 +277,12 @@ export default function ServicosPage() {
       )}
 
       {!loading && filteredServices.length === 0 && (
-        <Card className="border-[var(--ink-10)]">
-          <CardContent className="p-12 text-center">
-            <Scissors className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-            <p className="text-[var(--ink-60)]">{t("service_no_category")}</p>
+        <Card className="border-dashed border-[var(--ink-10)]">
+          <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
+            <div className="w-16 h-16 rounded-full bg-[var(--coral-pale)] flex items-center justify-center">
+              <Scissors className="h-8 w-8 text-[var(--coral)]" />
+            </div>
+            <p className="text-[var(--ink-60)] text-center">{t("service_no_category")}</p>
           </CardContent>
         </Card>
       )}

@@ -155,7 +155,7 @@ export default function ClientesPage() {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-30)]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-40)]" />
         <Input placeholder={t("search_clients_placeholder")} className="pl-10 border-[var(--ink-10)]"
           value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       </div>
@@ -219,10 +219,12 @@ export default function ClientesPage() {
       )}
 
       {!loading && filteredClients.length === 0 && (
-        <Card className="border-[var(--ink-10)]">
-          <CardContent className="p-12 text-center">
-            <User className="h-12 w-12 mx-auto text-[var(--ink-30)] mb-4" />
-            <p className="text-[var(--ink-60)]">{t("no_client_found")}</p>
+        <Card className="border-dashed border-[var(--ink-10)]">
+          <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
+            <div className="w-16 h-16 rounded-full bg-[var(--coral-pale)] flex items-center justify-center">
+              <User className="h-8 w-8 text-[var(--coral)]" />
+            </div>
+            <p className="text-[var(--ink-60)] text-center">{t("no_client_found")}</p>
           </CardContent>
         </Card>
       )}

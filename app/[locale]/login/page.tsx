@@ -1,15 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { useLocale, useTranslations } from "next-intl"
+import { Link, useRouter } from "@/i18n/routing"
+import { useTranslations } from "next-intl"
 import { signIn } from "@/lib/auth-client"
 import { Loader2, Lock, Eye, EyeOff, Calendar } from "lucide-react"
 
 export default function LoginPage() {
   const t = useTranslations("Auth")
-  const locale = useLocale()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,7 +24,7 @@ export default function LoginPage() {
       if (result.error) {
         setError(t("error_credentials"))
       } else {
-        router.push(`/${locale}/admin`)
+        router.push("/admin")
         router.refresh()
       }
     } catch {
@@ -79,7 +77,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {error && <div className="px-4 py-3 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>}
+            {error && <div className="px-4 py-3 rounded-xl bg-error-bg text-error text-sm">{error}</div>}
 
             <button type="submit" disabled={loading || !email || !password}
               className="w-full py-3 px-6 rounded-xl bg-coral hover:bg-coral-dark text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(232,80,58,0.25)]">
@@ -91,7 +89,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-ink-60 mt-6">
           {t("no_account")}{" "}
-          <Link href={`/${locale}/register`} className="text-coral hover:text-coral-dark font-medium">
+          <Link href="/register" className="text-coral hover:text-coral-dark font-medium">
             {t("register_link")}
           </Link>
         </p>
