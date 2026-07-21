@@ -20,3 +20,7 @@ node_modules
 # Playwright
 playwright-report/
 test-results/
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
+*.tsbuildinfo
